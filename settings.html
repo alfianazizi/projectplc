@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<!-- Bootstrap -->
+  	<link rel="stylesheet" href="http://localhost/projectplc/assets/css/bootstrap.min.css"/>
+	<script src="http://localhost/projectplc/assets/jQuery/jquery-3.3.1.min.js"></script>
+	<script src="http://localhost/projectplc/assets/js/bootstrap.min.js"></script>
+  	<link rel="stylesheet" href="http://localhost/projectplc/assets/css/custom.css"/>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UPS Dashboard : Settings</title>
+  </head>
+  <body">
+    <div id="navbar"></div>
+ <!-- include navbar -->
+    <script type="text/javascript">
+    	$(function() {
+		    $("#navbar").load("navbar.html");
+		});
+    </script>
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-4">
+				<div class="panel panel-default">
+					<div class="panel-heading">Profile UPS</div>
+					<div class="panel-body">
+						<table>
+							<tr>
+								<td width="100">Nomor UPS</td>
+								<td>:</td>
+								<td>106</td>
+							</tr>
+							<tr>
+								<td>Alamat instalasi</td>
+								<td>:</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<button class="btn btn-default" data-toggle="modal" data-target="#accModal">Ganti Username/Password</button>
+			</div>
+			<div class="col-sm-8">
+				<div class="panel panel-default">
+					<div class="panel-heading">Change Network Address</div>
+					<div class="panel-body">
+						<form>
+							<table>
+				            	<tr>
+				            		<td height="50" width="100">
+							            <label for='username'>IP Address</label>
+				            		</td>
+				            		<td height="50">
+				           				<input type='text' name='username' id='username' required="required"><br />
+				            		</td>
+				            	</tr>
+				            	<tr>
+				            		<td height="50" width="100">
+							            <label for='username1'>Netmask</label>
+				            		</td>
+				            		<td height="50">
+				           				<input type='text' name='username1' id='username' required="required"><br />
+				            		</td>
+				            	</tr>
+				            	<tr>
+				            		<td height="50" width="100">
+							            <label for='username2'>Gateway</label>
+				            		</td>
+				            		<td height="50">
+				           				<input type='text' name='username2' id='username' required="required"><br />
+				            		</td>
+				            	</tr>
+				            	<tr>
+				            		<td height="50" width="100">
+							            <label for='username2'>Network</label>
+				            		</td>
+				            		<td height="50">
+				           				<input type='text' name='username2' id='username' required="required"><br />
+				            		</td>
+				            	</tr>
+				            	<tr>
+				            		<td height="50" width="100">
+							            <label for='username2'>Broadcast</label>
+				            		</td>
+				            		<td height="50">
+				           				<input type='text' name='username2' id='username' required="required"><br />
+				            		</td>
+				            	</tr>
+				            </table>
+			            	<input type='Submit' class="btn btn-default" value='Simpan' />
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="accModal" class="modal fade" role="dialog">
+	    <div class="modal-dialog">
+
+	      <!-- Modal content-->
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">&times;</button>
+	          <h4 class="modal-title">Edit Akun</h4>
+	        </div>
+	        <div class="modal-body">
+	          	<table>
+	            	<tr>
+	            		<td height="50" width="100">
+				            <label for='username'>Username</label>
+	            		</td>
+	            		<td height="50">
+	           				<input type='text' name='username' id='username' size='25' / required="required"><br />
+	            		</td>
+	            	</tr>
+	            	<tr>
+	            		<td height="50" width="100">
+				            <label for='password'>Password</label>
+	            		</td>
+	            		<td height="50">
+				            <input type='password' name='password' id='password' size='25' required="required" /><br />                            
+	            		</td>
+	            	</tr>
+	            	<tr>
+	            		<td height="50" width="100">
+				            <label for='confirm_password'>Confirm Password</label>
+	            		</td>
+	            		<td height="50">
+				            <input type='password' name='confirm_password' id='password' size='25' required="required" /><br />                            
+	            		</td>
+	            	</tr>
+            	</table>
+	        </div>
+	        <div class="modal-footer">
+	          <a href="#"><button type="button" class="btn btn-default">Simpan</button></a>
+	        </div>
+	      </div>
+
+	    </div>
+	  </div>
+
+  </body>
+</html>
