@@ -41,44 +41,50 @@
 	</div>
 
 	<script>
-		var dataLog;
-		$.ajax({
-		  type: "GET",  
-		  url: "log/2018-10-temp.csv",
-		  dataType: "text",
-		  async: false,
-		  success: function(response)  
-		  {
-			dataLog = $.csv.toObjects(response);
-			// console.log(dataLog);
-		  }   
-		});
-			console.log(dataLog);
-			
-    	// for 3 days record
-    		// pakai fungsi biar tinggal panggil
+		function generateData() {
+			var dataLog;
+			$.ajax({
+			  type: "GET",  
+			  url: "log/2018-10-temp.csv",
+			  dataType: "text",
+			  async: false,
+			  success: function(response)  
+			  {
+				dataLog = $.csv.toObjects(response);
+				// console.log(dataLog);
+			  }   
+			});
+				console.log(dataLog);
+				
+	    	// for 3 days record
+	    		// pakai fungsi biar tinggal panggil
 
-    	var ctx = document.getElementById("tempChart").getContext('2d');
-	    
-    	// var lab = JSON.parse(dataLog);
-    	// console.log(dataLog.map(function (a) { return a.datetime; }));
+	    	var ctx = document.getElementById("tempChart").getContext('2d');
+		    
+	    	// var lab = JSON.parse(dataLog);
+	    	// console.log(dataLog.map(function (a) { return a.datetime; }));
 
-	    var temperatureChartData = {
-	    	labels :  dataLog.map(function (a) { return a.time; }),
-	    	datasets : [
-	    		{
-	    			label : "Temperatur",
-	    			data : dataLog.map(function (a) { return a.temperature; }),
-	    			fill : false, 
-	    			borderColor : 'rgb(75, 192, 192)',
-	    			lineTension : 0.1
-	    		}
-    		]
-	    };
-		var tempChart = new Chart(ctx, {
-	        type: 'line',
-	        data: temperatureChartData
-	    });
+		    var temperatureChartData = {
+		    	labels :  dataLog.map(function (a) { return a.time; }),
+		    	datasets : [
+		    		{
+		    			label : "Temperatur",
+		    			data : dataLog.map(function (a) { return a.temperature; }),
+		    			fill : false, 
+		    			borderColor : 'rgb(75, 192, 192)',
+		    			lineTension : 0.1
+		    		}
+	    		]
+		    };
+			var tempChart = new Chart(ctx, {
+		        type: 'line',
+		        data: temperatureChartData
+		    });
+		}
+
+		// setTimeout(generateData, 3000);
+		generateData();
+		
     </script>
 
 

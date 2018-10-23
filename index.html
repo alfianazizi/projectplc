@@ -4,15 +4,17 @@
   	<!-- Bootstrap -->
   	<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
 	<script src="assets/jQuery/jquery-3.3.1.min.js"></script>
+	<script src="assets/jquery.csv.js"></script>
 	<script src="assets/js/bootstrap.min.js"></script>
   	<link rel="stylesheet" href="assets/css/custom.css"/>
+  	<!-- <meta http-equiv="refresh" content="5" /> -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>UPS Dashboard</title>
   </head>
   <body>
-  	<script type="text/javascript" src="assets/Chartjs/dist/chart.min.js"></script>
+  	<script type="text/javascript" src="assets/Chartjs/dist/Chart.min.js"></script>
    	<div id="navbar"></div>
    	 <!-- include navbar -->
     <script type="text/javascript">
@@ -79,7 +81,7 @@
 		  success: function(response)  
 		  {
 			dataLog = $.csv.toObjects(response);
-			// get last row
+			console.log(dataLog);
 
 		  }   
 		});
