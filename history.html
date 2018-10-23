@@ -2,18 +2,18 @@
 <html>
   <head>
   	<!-- Bootstrap -->
-  	<link rel="stylesheet" href="http://localhost/projectplc/assets/css/bootstrap.min.css"/>
-	<script src="http://localhost/projectplc/assets/jQuery/jquery-3.3.1.min.js"></script>
-	<script src="http://localhost/projectplc/assets/jquery.csv.js"></script>
-	<script src="http://localhost/projectplc/assets/js/bootstrap.min.js"></script>
-  	<link rel="stylesheet" href="http://localhost/projectplc/assets/css/custom.css"/>
+  	<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
+	<script src="assets/jQuery/jquery-3.3.1.min.js"></script>
+	<script src="assets/jquery.csv.js"></script>
+	<script src="assets/js/bootstrap.min.js"></script>
+  	<link rel="stylesheet" href="assets/css/custom.css"/>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>UPS Dashboard History</title>
   </head>
   <body>
-  	<script type="text/javascript" src="http://localhost/projectplc/assets/Chartjs/dist/chart.min.js"></script>
+  	<script type="text/javascript" src="assets/Chartjs/dist/chart.min.js"></script>
 	<div id="navbar"></div>
 	 <!-- include navbar -->
     <script type="text/javascript">
@@ -44,7 +44,7 @@
 		var dataLog;
 		$.ajax({
 		  type: "GET",  
-		  url: "http://localhost/projectplc/log/2018-10-temp.csv",
+		  url: "log/2018-10-temp.csv",
 		  dataType: "text",
 		  async: false,
 		  success: function(response)  
