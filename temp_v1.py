@@ -5,8 +5,9 @@ import os
 
 cpu = CPUTemperature()
 header = ['time', 'temperature']
+dirpath = os.getcwd()
 filename_date = strftime("%Y-%m")
-filename_temp = filename_date + '-temp.csv'
+filename_temp = dirpath + '/log/' + filename_date + '-temp.csv'
 updateTemp = 5 #5 second interval update
 tt = time() #temp initial timer
 
@@ -24,7 +25,7 @@ def write_temp(filename,data):
 	with open(filename, 'a') as log:
 		file_is_empty = os.stat(filename).st_size == 0
 		temp_writer = writer(log, lineterminator='\n')
-		if file_is_empty:	
+		if file_is_empty:
 			temp_writer.writerow(header)
 		temp_writer.writerow(data)
 
