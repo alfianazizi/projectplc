@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<!-- Bootstrap -->
+  	<link rel="stylesheet" href="http://localhost/projectplc/assets/css/bootstrap.min.css"/>
+	<script src="http://localhost/projectplc/assets/jQuery/jquery-3.3.1.min.js"></script>
+	<script src="http://localhost/projectplc/assets/js/bootstrap.min.js"></script>
+  	<link rel="stylesheet" href="http://localhost/projectplc/assets/css/custom.css"/>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UPS Dashboard</title>
+  </head>
+  <body>
+  	<script type="text/javascript" src="http://localhost/projectplc/assets/Chartjs/dist/chart.min.js"></script>
+   	<div id="navbar"></div>
+   	 <!-- include navbar -->
+    <script type="text/javascript">
+    	$(function() {
+		    $("#navbar").load("navbar.html");
+		});
+    </script>
+  	<div class="container">
+	<div class="row">
+		<div class="col-sm-3">
+			<div class="panel panel-default">
+				<div class="panel-heading" align="center" style="background-color: #7e57c2;">Current Temperature</div>
+				<div class="panel-body" style="background-color: #9575cd;" id="temp">
+					<h1 align="center">65 &deg; C</h1>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-3">
+			<div class="panel panel-default">
+				<div class="panel-heading" align="center" style="background-color: #f57c00;">Current Voltage</div>
+				<div class="panel-body" style="background-color: #ffcc80;" id="vol">
+					<h1 align="center">650 V</h1>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-3">
+			<div class="panel panel-default">
+				<div class="panel-heading" align="center" style="background-color: #2196f3;">Current Battery Capacity</div>
+				<div class="panel-body" style="background-color: #90caf9;" id="cap">
+					<h1 align="center">100%</h1>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-3">
+			<div class="panel panel-default">
+				<div class="panel-heading" align="center" style="background-color: #4caf50;">Current Battery Capacity</div>
+				<div class="panel-body" style="background-color: #81c784;" id="cap">
+					<h1 align="center">100%</h1>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="panel panel-default">
+				<div class="panel-heading">Today's Status</div>
+				<div class="panel-body">
+					<canvas id="tempChart" width="500" height="100" border="0"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+	<script type="text/javascript">
+		var ctx = document.getElementById("tempChart").getContext('2d');
+	    var temperatureChartData = {
+	    	labels :  ["00:00","00:10","00:20","00:30","00:40","00:50","01:00"],
+	    	datasets : [
+	    		{
+	    			label : "Temperature datasets",
+	    			data : [65,59,80,81,56,55,65],
+	    			fill : false, 
+	    			borderColor : 'rgb(75, 192, 192)',
+	    			lineTension : 0.1
+	    		}
+    		]
+	    };
+		var tempChart = new Chart(ctx, {
+	        type: 'line',
+	        data: temperatureChartData
+	    });
+
+
+
+		$("#cap").click(function() {
+		    var data = tempChart.config.data;
+		    data.datasets[0].label = "Battery capacity datasets";
+		    data.datasets[0].data = [95,90,80,81,96,45,25];
+		    tempChart.update();
+		});
+
+		$("#temp").click(function() {
+		    var data = tempChart.config.data;
+		    data.datasets[0].label = "Temperature datasets";
+		    data.datasets[0].data = [65,59,80,81,56,55,65];
+		    tempChart.update();
+		});
+
+		$("#vol").click(function() {
+		    var data = tempChart.config.data;
+		    data.datasets[0].label = "Voltage datasets";
+		    data.datasets[0].data = [5,19,50,21,66,45,35];
+		    tempChart.update();
+		});
+	</script>
+    
+  </body>
+</html>

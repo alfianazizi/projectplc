@@ -1,0 +1,17 @@
+.navbar-default {
+  background-color:#546e7a;
+  background-image: none;
+  background-repeat: no-repeat;
+ }
+
+.panel-default .panel-heading {
+  background-color:#546e7a;
+  background-image: none;
+  background-repeat: no-repeat;
+  color: #eceff1;
+ } 
+
+ .btn-default {
+ 	background-color: #546e7a;
+ 	color: #eceff1;
+ }
