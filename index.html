@@ -71,9 +71,11 @@
 </div>
 
 	<script type="text/javascript">
-		window.onload = function() { 
-	    	readAll();
-	  	};
+		var tempChartData;
+		var arusChartData;
+		var batChartData;
+		readAll();
+		redrawChart();
 
 		// read all 3 logfiles
 		function readAll() {
@@ -113,10 +115,6 @@
 			  }   
 			});
 
-			// console.log(tempData.length);
-			// console.log(arusData.length);
-			// console.log(batData.length);
-
 			var textWidget = document.getElementById("currentTemp");
 			textWidget.textContent = (Math.round(parseFloat(tempData[tempData.length-1].temperature) * 100) / 100)+'\u00B0'+'C';
 			
@@ -126,43 +124,14 @@
 			var textWidget = document.getElementById("currentBat");
 			textWidget.textContent = (Math.round(parseFloat(batData[batData.length-1].battery) * 100) / 100)+' %';
 
-			var tempChartData = generateChartData(tempData);
-			var arusChartData = generateChartData(arusData);
-			var batChartData = generateChartData(batData);
+			tempChartData = generateChartData(tempData);
+			arusChartData = generateChartData(arusData);
+			batChartData = generateChartData(batData);
 
-			var ctx = document.getElementById("allChart").getContext('2d');
-		    var lineChartData = {
-		    	labels :  tempChartData.map(function (a) { return a.time.substring(11,16); }),
-		    	datasets : [
-		    		{
-		    			label : "Temperatur",
-		    			data : tempChartData.map(function (a) { return a.temperature; }),
-		    			fill : false, 
-		    			borderColor : 'rgb(75, 192, 192)',
-		    			lineTension : 0.1
-		    		},
-		    		{
-		    			label : "Arus",
-		    			data : arusChartData.map(function (a) { console.log(a.arus);return a.arus; }),
-		    			fill : false, 
-		    			borderColor : 'rgb(255, 153, 58)',
-		    			lineTension : 0.1
-		    		},
-		    		{
-		    			label : "Baterai",
-		    			data : batChartData.map(function (a) { return a.battery; }),
-		    			fill : false, 
-		    			borderColor : 'rgb(155, 66, 244)',
-		    			lineTension : 0.1
-		    		}
-	    		]
-		    };
-			var createChart = new Chart(ctx, {
-		        type: 'line',
-		        data: lineChartData
-		    });
-
+			// redrawChart(tempChartData, arusChartData, batChartData);
+			console.log('widget');
 			setTimeout(readAll, 5000);
+			// redrawChart(tempChartData, arusChartData, batChartData);
 		}
 
 		// read csv file untuk temperatur
@@ -183,6 +152,45 @@
 			}
 
 			return dataChart;
+		}
+
+		// console.log(tempChartData);
+		// redrawChart(tempChartData, arusChartData, batChartData);
+		// redrawChart();
+		function redrawChart() {
+			var ctx = document.getElementById("allChart").getContext('2d');
+		    var lineChartData = {
+		    	labels :  tempChartData.map(function (a) { return a.time.substring(11,16); }),
+		    	datasets : [
+		    		{
+		    			label : "Temperatur",
+		    			data : tempChartData.map(function (a) { return a.temperature; }),
+		    			fill : false, 
+		    			borderColor : 'rgb(75, 192, 192)',
+		    			lineTension : 0.1
+		    		},
+		    		{
+		    			label : "Arus",
+		    			data : arusChartData.map(function (a) { return a.arus; }),
+		    			fill : false, 
+		    			borderColor : 'rgb(255, 153, 58)',
+		    			lineTension : 0.1
+		    		},
+		    		{
+		    			label : "Baterai",
+		    			data : batChartData.map(function (a) { return a.battery; }),
+		    			fill : false, 
+		    			borderColor : 'rgb(155, 66, 244)',
+		    			lineTension : 0.1
+		    		}
+	    		]
+		    };
+			var createChart = new Chart(ctx, {
+		        type: 'line',
+		        data: lineChartData
+		    });
+			console.log(tempChartData.length);
+		    setTimeout(redrawChart, 10000);
 		}
 
 	</script>
