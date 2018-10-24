@@ -4,7 +4,7 @@ from csv import writer
 import os
 
 cpu = CPUTemperature()
-header = ['time', 'temperature']
+header_temp = ['time', 'temperature']
 dirpath = os.getcwd()
 filename_date = strftime("%Y-%m")
 filename_temp = dirpath + '/log/' + filename_date + '-temp.csv'
@@ -26,7 +26,7 @@ def write_temp(filename,data):
 		file_is_empty = os.stat(filename).st_size == 0
 		temp_writer = writer(log, lineterminator='\n')
 		if file_is_empty:
-			temp_writer.writerow(header)
+			temp_writer.writerow(header_temp)
 		temp_writer.writerow(data)
 
 while True:
