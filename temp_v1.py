@@ -12,7 +12,6 @@ updateTemp = 5 #5 second interval update
 tt = time() #temp initial timer
 
 print("Logging Temperature")
-print(filename_date)
 
 def get_temp_data():
 	temp_data = []
