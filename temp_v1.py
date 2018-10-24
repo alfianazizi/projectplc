@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from gpiozero import CPUTemperature
 from time import sleep, strftime, time
 from csv import writer
