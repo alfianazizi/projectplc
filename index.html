@@ -187,7 +187,15 @@
 		    };
 			var createChart = new Chart(ctx, {
 		        type: 'line',
-		        data: lineChartData
+		        data: lineChartData,
+		        options: {
+			        tooltips: {
+			            mode: 'nearest'
+			        },
+			        hover: {
+			        	mode: 'nearest'
+			    	}
+			    }
 		    });
 			console.log(tempChartData.length);
 		    setTimeout(redrawChart, 10000);
