@@ -51,7 +51,7 @@
 			  success: function(response)  
 			  {
 				dataLog = $.csv.toObjects(response);
-				// console.log(dataLog);
+				// console.log(this);
 			  }   
 			});
 				console.log(dataLog);
@@ -80,9 +80,9 @@
 		        type: 'line',
 		        data: temperatureChartData
 		    });
+			setTimeout(generateData, 10000);
 		}
 
-		// setTimeout(generateData, 3000);
 		generateData();
 		
     </script>
