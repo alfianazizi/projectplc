@@ -7,7 +7,7 @@ import os
 
 cpu = CPUTemperature()
 header_temp = ['time', 'temperature']
-dirpath = os.getcwd()
+dirpath = os.path.dirname(os.path.realpath(__file__))
 filename_date = strftime("%Y-%m")
 filename_temp = dirpath + '/log/' + filename_date + '-temp.csv'
 updateTemp = 5 #5 second interval update
