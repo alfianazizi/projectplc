@@ -143,7 +143,6 @@
 			var now = new Date();
 			var c = now.getMinutes();
 			for (var i = data.length-720; i < data.length; i++) {
-				dataChart[counter] = data[i];
 				if(data[i].time.substring(14,16) != c) {
 					dataChart[counter] = data[i];
 					c = data[i].time.substring(14,16);

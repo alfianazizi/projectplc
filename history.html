@@ -5,6 +5,7 @@
   	<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
 	<script src="assets/jQuery/jquery-3.3.1.min.js"></script>
 	<script src="assets/jquery.csv.js"></script>
+	<script src="assets/moment.js"></script>
 	<script src="assets/js/bootstrap.min.js"></script>
   	<link rel="stylesheet" href="assets/css/custom.css"/>
     <meta charset="utf-8">
@@ -23,26 +24,27 @@
     </script>
 
 	<div class="container">
-		<ul class="nav nav-tabs">
-			<li role="presentation" class="active"><a href="#">Temperatur</a></li>
-			<li role="presentation"><a href="#">Arus</a></li>
-			<li role="presentation"><a href="#">Kapasitas Baterai</a></li>
-		</ul>
-		<div class="tab-content">
-	    	<div id="home" class="tab-pane fade in active">
-				<canvas id="tempChart" width="500" height="200" border="0"></canvas>
-	    		<div align="center">
-		    		<button class="btn btn-default">3 Hari</button>
-		    		<button class="btn btn-default">7 Hari</button>
-		    		<button class="btn btn-default">1 Bulan</button>
-		    	</div>
-			</div>
-		</div>
+		<canvas id="histChart" width="500" height="200" border="0"></canvas>
+		<div align="center">
+    		<button class="btn btn-default" id="1d">1 Hari</button>
+    		<button class="btn btn-default" id="7d">7 Hari</button>
+    		<button class="btn btn-default" id="14d">14 Hari</button>
+    		<button class="btn btn-default" id="30d">1 Bulan</button>
+    	</div>
 	</div>
 
 	<script>
-		function generateData() {
-			var dataLog;
+		var tempData;
+		var arusData;
+		var batData;
+		readAll();
+		var tempChartData = generateChartData(tempData);
+		var arusChartData = generateChartData(arusData);
+		var batChartData = generateChartData(batData);
+		var histChart;
+		firstDraw();
+
+		function readAll() {
 			$.ajax({
 			  type: "GET",  
 			  url: "log/2018-10-temp.csv",
@@ -50,44 +52,160 @@
 			  async: false,
 			  success: function(response)  
 			  {
-				dataLog = $.csv.toObjects(response);
-				// console.log(this);
+				tempData = $.csv.toObjects(response);
 			  }   
 			});
-				console.log(dataLog);
-				
-	    	// for 3 days record
-	    		// pakai fungsi biar tinggal panggil
 
-	    	var ctx = document.getElementById("tempChart").getContext('2d');
-		    
-	    	// var lab = JSON.parse(dataLog);
-	    	// console.log(dataLog.map(function (a) { return a.datetime; }));
+			$.ajax({
+			  type: "GET",  
+			  url: "log/2018-10-arus.csv",
+			  dataType: "text",
+			  async: false,
+			  success: function(response)  
+			  {
+				arusData = $.csv.toObjects(response);
+			  }   
+			});
 
-		    var temperatureChartData = {
-		    	labels :  dataLog.map(function (a) { return a.time; }),
+			$.ajax({
+			  type: "GET",  
+			  url: "log/2018-10-bat.csv",
+			  dataType: "text",
+			  async: false,
+			  success: function(response)  
+			  {
+				batData = $.csv.toObjects(response);
+			  }   
+			});
+		}
+
+		function generateChartData(data) {
+			var data30 = [];
+			var data14 = [];
+			var data7 = [];
+			var data1 = [];
+			var counter30 = 0;
+			var counter14 = 0;
+			var counter7 = 0;
+			var counter1 = 0;
+			// get only 1st data on every 5 minute(s)
+			// get current datetime
+			var now = new Date();
+			var m1 = now.getMinutes();
+			var h7 = now.getHours();
+			var h14 = now.getHours();
+			var h30 = now.getHours();
+			for (var i = 1; i < data.length; i++) {
+				var oldDate = moment(data[i].time).format('YYYY-MM-DD HH:mm:ss');
+				//cek untuk ambil data per 14 hari
+				if(i >= data.length-242000) {
+					//cek untuk ambil data per 7 hari
+					if(i >= data.length-121000) {
+						//cek untuk ambil data 1 hari
+						if(i >= data.length-17300) {
+							if(data[i].time.substring(14,16) == m1) {
+								data1[counter1] = data[i];
+								var newDate = moment(oldDate).add(5, 'm').toDate();
+								m1 = moment(newDate).minutes().toString();
+								// console.log(m1);
+								counter1++;
+							}
+						}
+						if(data[i].time.substring(11,13) == h7) {
+							data7[counter7] = data[i];
+							var newDate = moment(oldDate).add(1, 'h').toDate();
+							h7 = moment(newDate).hours().toString();
+							counter7++;
+						}
+					}
+					if(data[i].time.substring(11,13) == h14) {
+						data14[counter14] = data[i];
+						var newDate = moment(oldDate).add(1, 'h').toDate();
+						h14 = moment(newDate).hours().toString();
+						counter14++;
+					}
+				}
+				if(data[i].time.substring(11,13) == h30) {
+					data30[counter30] = data[i];
+					var newDate = moment(oldDate).add(1, 'h').toDate();
+					h30 = moment(newDate).hours().toString();
+					counter30++;
+				}
+			}
+
+			var allChartData = [data30, data14, data7, data1];
+			// console.log(allChartData);
+			return allChartData;
+		}
+
+		function firstDraw() {
+			var ctx = document.getElementById("histChart").getContext('2d');
+		    var lineChartData = {
+		    	labels :  tempChartData[3].map(function (a) { return a.time; }),
 		    	datasets : [
 		    		{
 		    			label : "Temperatur",
-		    			data : dataLog.map(function (a) { return a.temperature; }),
+		    			data : tempChartData[3].map(function (a) { return a.temperature; }),
 		    			fill : false, 
 		    			borderColor : 'rgb(75, 192, 192)',
+		    			lineTension : 0.1
+		    		},
+		    		{
+		    			label : "Arus",
+		    			data : arusChartData[3].map(function (a) { return a.arus; }),
+		    			fill : false, 
+		    			borderColor : 'rgb(255, 153, 58)',
+		    			lineTension : 0.1
+		    		},
+		    		{
+		    			label : "Baterai",
+		    			data : batChartData[3].map(function (a) { return a.battery; }),
+		    			fill : false, 
+		    			borderColor : 'rgb(155, 66, 244)',
 		    			lineTension : 0.1
 		    		}
 	    		]
 		    };
-			var tempChart = new Chart(ctx, {
+			histChart = new Chart(ctx, {
 		        type: 'line',
-		        data: temperatureChartData
+		        data: lineChartData
 		    });
-			setTimeout(generateData, 10000);
 		}
+		
 
-		generateData();
+		$("#1d").click(function() {
+		    var data = histChart.config.data;
+		    data.datasets[0].data = tempChartData[3].map(function (a) { return a.temperature; });
+		    data.datasets[1].data = tempChartData[3].map(function (a) { return a.arus; });
+		    data.datasets[2].data = tempChartData[3].map(function (a) { return a.battery; });
+		    histChart.update();
+		});
+
+		$("#7d").click(function() {
+		    var data = histChart.config.data;
+		    data.datasets[0].data = tempChartData[2].map(function (a) { return a.temperature; });
+		    data.datasets[1].data = tempChartData[2].map(function (a) { return a.arus; });
+		    data.datasets[2].data = tempChartData[2].map(function (a) { return a.battery; });
+		    histChart.update();
+		});
+
+		$("#14d").click(function() {
+		    var data = histChart.config.data;
+		    data.datasets[0].data = tempChartData[1].map(function (a) { return a.temperature; });
+		    data.datasets[1].data = tempChartData[1].map(function (a) { return a.arus; });
+		    data.datasets[2].data = tempChartData[1].map(function (a) { return a.battery; });
+		    histChart.update();
+		});
+
+		$("#30d").click(function() {
+		    var data = histChart.config.data;
+		    data.datasets[0].data = tempChartData[0].map(function (a) { return a.temperature; });
+		    data.datasets[1].data = tempChartData[0].map(function (a) { return a.arus; });
+		    data.datasets[2].data = tempChartData[0].map(function (a) { return a.battery; });
+		    histChart.update();
+		});
 		
     </script>
 
-
-   
   </body>
 </html>
