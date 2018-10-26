@@ -45,4 +45,4 @@ def index():
 
 if __name__ == "__main__":
 	thread.start_new_thread(get_temp_data, ())
-	app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)
+	app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
