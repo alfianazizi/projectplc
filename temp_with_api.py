@@ -5,6 +5,7 @@ from gpiozero import CPUTemperature
 from time import sleep, strftime, time
 from csv import writer
 import os
+from thread import thread
 app = Flask(__name__)
 
 
