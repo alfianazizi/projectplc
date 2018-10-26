@@ -5,7 +5,7 @@ from gpiozero import CPUTemperature
 from time import sleep, strftime, time
 from csv import writer
 import os
-from thread import thread
+import thread
 app = Flask(__name__)
 
 
@@ -34,7 +34,7 @@ def get_temp_data():
 			temp_data.append(strftime("%Y-%m-%d %H:%M:%S"))
 			temp_data.append(cpu.temperature)
 			tt = time()
-
+			print temp_data
 @app.route("/api/v1/sensor")
 def index():
 	sensor = {
