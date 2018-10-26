@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from Flask import Flask
+from flask import Flask
 from gpiozero import CPUTemperature
 from time import sleep, strftime, time
 from csv import writer
