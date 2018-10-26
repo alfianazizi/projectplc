@@ -38,8 +38,8 @@ def get_temp_data():
 @app.route("/api/v1/sensor")
 def index():
 	sensor = {
-		'time' : temp_data[0],
-		'temperature' : temp_data[1]
+		'time' : temp_data[1],
+		'temperature' : temp_data[2]
 	}
 	return jsonify(sensor)
 
