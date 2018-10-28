@@ -1,4 +1,4 @@
-time,temperatur,arus,baterai
+time,temperature,arus,battery
 2018-10-01 00:00,60.74,44.95,53
 2018-10-01 00:05,61.02,43.54,57
 2018-10-01 00:10,64.86,43.26,53
