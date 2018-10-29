@@ -53,14 +53,15 @@ def write_voltage(filename,data):
 
 def sensor_now(filename, temp, current, voltage):
 	with open(filename, 'w') as now:
-		now.write(temp + '\n')
-		now.write(current + '\n')
-		now.write(voltage + '\n')
+		now.write(str(temp) + '\n')
+		now.write(str(current) + '\n')
+		now.write(str(voltage))
+
 
 while True:
 	temp = get_temp_data()
-	t1, t2 = time()
-	
+	t1 = time()
+	t2 = time()
 	if t1 - tt >= updateSensor:
 		write_temp(filename_temp, temp)
 		write_current(filename_current, curr)
