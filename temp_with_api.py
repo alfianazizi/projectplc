@@ -1,11 +1,12 @@
 #!/usr/bin/python
 
 from flask import Flask
+from flask import jsonify
 from gpiozero import CPUTemperature
 from time import sleep, strftime, time
 from csv import writer
 import os
-import thread
+import threading
 app = Flask(__name__)
 
 
@@ -20,7 +21,7 @@ header_temp = ['time', 'temperature']
 dirpath = os.path.dirname(os.path.realpath(__file__))
 filename_date = strftime("%Y-%m")
 filename_temp = dirpath + '/log/' + filename_date + '-temp.csv'
-updateTemp = 5 #5 second interval update
+updateTemp = 2 #5 second interval update
 global tt
 tt = time() #temp initial timer
 
@@ -35,15 +36,15 @@ def get_temp_data():
 			temp_data.append(strftime("%Y-%m-%d %H:%M:%S"))
 			temp_data.append(str(cpu.temperature))
 			tt = time()
-			print temp_data
+
 @app.route("/api/v1/sensor")
 def index():
 	sensor = {
-		'time' : temp_data[0],
-		'temperature' : temp_data[1]
+		'time' : strftime("%Y-%m-%d %H:%M:%S"),
+		'temperature' : str(cpu.temperature)
 	}
 	return jsonify(sensor)
 
 if __name__ == "__main__":
-	thread.start_new_thread(get_temp_data, ())
-	app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)
+	#threading.Thread(target=get_temp_data).start()
+	app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
