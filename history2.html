@@ -34,37 +34,49 @@
 	</div>
 
 	<script>
-		var tempData = [];
-		var arusData = [];
-		var batData = [];
+		var tempData;
+		var arusData;
+		var batData;
 		readAll();
 		var tempChartData = generateChartData(tempData);
 		var arusChartData = generateChartData(arusData);
 		var batChartData = generateChartData(batData);
-		console.log(batChartData);
 		var histChart;
 		firstDraw();
 
 		function readAll() {
-			var logData;
 			$.ajax({
 			  type: "GET",  
-			  url: "log/2018-10.csv",
+			  url: "log/2018-10-temp.csv",
 			  dataType: "text",
 			  async: false,
 			  success: function(response)  
 			  {
-				logData = $.csv.toObjects(response);
+				tempData = $.csv.toObjects(response);
 			  }   
 			});
-			var i = 0;
-			while (logData[i] != null) {
-				tempData[i] = (({ time, temperature }) => ({ time, temperature }))(logData[i]);
-				arusData[i] = (({ time, arus }) => ({ time, arus }))(logData[i]);
-				batData[i] = (({ time, battery }) => ({ time, battery }))(logData[i]);
-				i++;
-			}
-			// console.log(tempData);
+
+			$.ajax({
+			  type: "GET",  
+			  url: "log/2018-10-arus.csv",
+			  dataType: "text",
+			  async: false,
+			  success: function(response)  
+			  {
+				arusData = $.csv.toObjects(response);
+			  }   
+			});
+
+			$.ajax({
+			  type: "GET",  
+			  url: "log/2018-10-bat.csv",
+			  dataType: "text",
+			  async: false,
+			  success: function(response)  
+			  {
+				batData = $.csv.toObjects(response);
+			  }   
+			});
 		}
 
 		function generateChartData(data) {
@@ -78,39 +90,47 @@
 			var counter1 = 0;
 			// get only 1st data on every 5 minute(s)
 			// get current datetime
-			var now = moment();
-			var now14 = moment(now).subtract(14, 'd');
-			var now7 = moment(now).subtract(7, 'd');
-			var now1 = moment(now).subtract(1, 'd');
-			console.log(now1);
-			var i = 0;
-			// read file from top
-			while (data[i] != null) {
-				var logDate = moment(data[i].time).format('YYYY-MM-DD HH:mm:ss');
-				// masuk semua ke data 30 hari
-				data30[counter30] = data[i];
-				counter30++;
-
-				// cek kalau tanggal log masuk 14 hari dr sekarang
-				if (moment(logDate).isSameOrAfter(now14)) {
-					data14[counter14] = data[i];
-					counter14++;
+			var now = new Date();
+			var m1 = now.getMinutes();
+			var h7 = now.getHours();
+			var h14 = now.getHours();
+			var h30 = now.getHours();
+			for (var i = 1; i < data.length; i++) {
+				var oldDate = moment(data[i].time).format('YYYY-MM-DD HH:mm:ss');
+				//cek untuk ambil data per 14 hari
+				if(i >= data.length-242000) {
+					//cek untuk ambil data per 7 hari
+					if(i >= data.length-121000) {
+						//cek untuk ambil data 1 hari
+						if(i >= data.length-17300) {
+							if(data[i].time.substring(14,16) == m1) {
+								data1[counter1] = data[i];
+								var newDate = moment(oldDate).add(5, 'm').toDate();
+								m1 = moment(newDate).minutes().toString();
+								// console.log(m1);
+								counter1++;
+							}
+						}
+						if(data[i].time.substring(11,13) == h7) {
+							data7[counter7] = data[i];
+							var newDate = moment(oldDate).add(1, 'h').toDate();
+							h7 = moment(newDate).hours().toString();
+							counter7++;
+						}
+					}
+					if(data[i].time.substring(11,13) == h14) {
+						data14[counter14] = data[i];
+						var newDate = moment(oldDate).add(1, 'h').toDate();
+						h14 = moment(newDate).hours().toString();
+						counter14++;
+					}
 				}
-
-				// cek kalau tanggal log masuk 7 hari dr sekarang
-				if (moment(logDate).isSameOrAfter(now7)) {
-					data7[counter7] = data[i];
-					counter7++;
+				if(data[i].time.substring(11,13) == h30) {
+					data30[counter30] = data[i];
+					var newDate = moment(oldDate).add(1, 'h').toDate();
+					h30 = moment(newDate).hours().toString();
+					counter30++;
 				}
-
-				// cek kalau tanggal log masuk 1 hari dr sekarang
-				if (moment(logDate).isSameOrAfter(now1)) {
-					data1[counter1] = data[i];
-					counter1++;
-				}
-
-				// iterasi
-				i++;
 			}
 
 			var allChartData = [data30, data14, data7, data1];
@@ -155,37 +175,33 @@
 
 		$("#1d").click(function() {
 		    var data = histChart.config.data;
-		    data.labels = tempChartData[3].map(function (a) { return a.time; });
 		    data.datasets[0].data = tempChartData[3].map(function (a) { return a.temperature; });
-		    data.datasets[1].data = arusChartData[3].map(function (a) { return a.arus; });
-		    data.datasets[2].data = batChartData[3].map(function (a) { return a.battery; });
+		    data.datasets[1].data = tempChartData[3].map(function (a) { return a.arus; });
+		    data.datasets[2].data = tempChartData[3].map(function (a) { return a.battery; });
 		    histChart.update();
 		});
 
 		$("#7d").click(function() {
 		    var data = histChart.config.data;
-		    data.labels = tempChartData[2].map(function (a) { return a.time; });
 		    data.datasets[0].data = tempChartData[2].map(function (a) { return a.temperature; });
-		    data.datasets[1].data = arusChartData[2].map(function (a) { return a.arus; });
-		    data.datasets[2].data = batChartData[2].map(function (a) { return a.battery; });
+		    data.datasets[1].data = tempChartData[2].map(function (a) { return a.arus; });
+		    data.datasets[2].data = tempChartData[2].map(function (a) { return a.battery; });
 		    histChart.update();
 		});
 
 		$("#14d").click(function() {
 		    var data = histChart.config.data;
-		    data.labels = tempChartData[1].map(function (a) { return a.time; });
 		    data.datasets[0].data = tempChartData[1].map(function (a) { return a.temperature; });
-		    data.datasets[1].data = arusChartData[1].map(function (a) { return a.arus; });
-		    data.datasets[2].data = batChartData[1].map(function (a) { return a.battery; });
+		    data.datasets[1].data = tempChartData[1].map(function (a) { return a.arus; });
+		    data.datasets[2].data = tempChartData[1].map(function (a) { return a.battery; });
 		    histChart.update();
 		});
 
 		$("#30d").click(function() {
 		    var data = histChart.config.data;
-		    data.labels = tempChartData[0].map(function (a) { return a.time; });
 		    data.datasets[0].data = tempChartData[0].map(function (a) { return a.temperature; });
-		    data.datasets[1].data = arusChartData[0].map(function (a) { return a.arus; });
-		    data.datasets[2].data = batChartData[0].map(function (a) { return a.battery; });
+		    data.datasets[1].data = tempChartData[0].map(function (a) { return a.arus; });
+		    data.datasets[2].data = tempChartData[0].map(function (a) { return a.battery; });
 		    histChart.update();
 		});
 		
