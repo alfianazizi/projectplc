@@ -60,14 +60,16 @@ def sensor_now(filename, temp, current, voltage):
 
 while True:
 	temp = get_temp_data()
+	curr = random.randint(10,80)
+	volt = random.randint(60,100)
 	t1 = time()
 	t2 = time()
 	if t1 - tt >= updateSensor:
 		write_temp(filename_temp, temp)
 		write_current(filename_current, curr)
-		write_voltage(filename_voltage ,volt)
+		write_voltage(filename_voltage, volt)
 		tt = time()
 
 	if t2 - tn >= 5:
-		sensor_now(filename_sensor, cpu.temperature, random.randint(10,80), random.randint(60,100))
+		sensor_now(filename_sensor, cpu.temperature, curr, volt)
 		tn = time()
