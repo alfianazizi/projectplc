@@ -5,12 +5,19 @@
   	<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
 	<script src="assets/jQuery/jquery-3.3.1.min.js"></script>
 	<script src="assets/jquery.csv.js"></script>
+	<script src="assets/moment.js"></script>
 	<script src="assets/js/bootstrap.min.js"></script>
   	<link rel="stylesheet" href="assets/css/custom.css"/>
   	<!-- <meta http-equiv="refresh" content="5" /> -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- no cache -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    
     <title>UPS Dashboard</title>
   </head>
   <body>
@@ -71,92 +78,81 @@
 </div>
 
 	<script type="text/javascript">
-		var tempChartData;
-		var arusChartData;
-		var batChartData;
+		var tempData = [];
+		var arusData = [];
+		var batData = [];
 		readAll();
-		redrawChart();
+		readCurrent();
+		setInterval(readCurrent, 5000);
+		var tempChartData = generateChartData(tempData);
+		var arusChartData = generateChartData(arusData);
+		var batChartData = generateChartData(batData);
+		drawChart();
+
+		setInterval(readAll, 300000);
+		setInterval(function() { generateChartData(tempData); }, 300000);
+		setInterval(function() { generateChartData(arusData); }, 300000);
+		setInterval(function() { generateChartData(batData); }, 300000);
+		setInterval(drawChart, 300000);
 
 		// read all 3 logfiles
 		function readAll() {
-			var tempData;
+			var logData;
 			$.ajax({
 			  type: "GET",  
-			  url: "log/2018-10-temp.csv",
+			  url: "log/2018-10.csv",
 			  dataType: "text",
 			  async: false,
 			  success: function(response)  
 			  {
-				tempData = $.csv.toObjects(response);
+				logData = $.csv.toObjects(response);
 			  }   
 			});
+			var i = 0;
+			while (logData[i] != null) {
+				tempData[i] = (({ time, temperature }) => ({ time, temperature }))(logData[i]);
+				arusData[i] = (({ time, arus }) => ({ time, arus }))(logData[i]);
+				batData[i] = (({ time, battery }) => ({ time, battery }))(logData[i]);
+				i++;
+			}
+		}
 
-			var arusData;
+		function readCurrent() {
+			var currData = [];
 			$.ajax({
 			  type: "GET",  
-			  url: "log/2018-10-arus.csv",
+			  url: "log/sensor-now.txt",
 			  dataType: "text",
 			  async: false,
 			  success: function(response)  
 			  {
-				arusData = $.csv.toObjects(response);
+				currData = response.split(/[\n\r]+/);
 			  }   
 			});
-
-			var batData;
-			$.ajax({
-			  type: "GET",  
-			  url: "log/2018-10-bat.csv",
-			  dataType: "text",
-			  async: false,
-			  success: function(response)  
-			  {
-				batData = $.csv.toObjects(response);
-			  }   
-			});
-
 			var textWidget = document.getElementById("currentTemp");
-			textWidget.textContent = (Math.round(parseFloat(tempData[tempData.length-1].temperature) * 100) / 100)+'\u00B0'+'C';
-			
+			textWidget.textContent = (Math.round(parseFloat(currData[0]) * 100) / 100)+'\u00B0'+'C';
+
 			var textWidget = document.getElementById("currentArus");
-			textWidget.textContent = (Math.round(parseFloat(arusData[arusData.length-1].arus) * 100) / 100)+' A';
+			textWidget.textContent = (Math.round(parseFloat(currData[1]) * 100) / 100)+' A';
 			
 			var textWidget = document.getElementById("currentBat");
-			textWidget.textContent = (Math.round(parseFloat(batData[batData.length-1].battery) * 100) / 100)+' %';
-
-			tempChartData = generateChartData(tempData);
-			arusChartData = generateChartData(arusData);
-			batChartData = generateChartData(batData);
-
-			// redrawChart(tempChartData, arusChartData, batChartData);
-			console.log('widget');
-			setTimeout(readAll, 5000);
-			// redrawChart(tempChartData, arusChartData, batChartData);
+			textWidget.textContent = (Math.round(parseFloat(currData[2]) * 100) / 100)+' %';
 		}
 
 		// read csv file untuk temperatur
 		function generateChartData(data) {
 			var dataChart = [];
 			var counter = 0;
-			// get only 1st data on every minute(s) for 60 data
-			// get current datetime
-			var now = new Date();
-			var c = now.getMinutes();
-			for (var i = data.length-720; i < data.length; i++) {
-				if(data[i].time.substring(14,16) != c) {
-					dataChart[counter] = data[i];
-					c = data[i].time.substring(14,16);
-					counter++;
-				}
+			// get only 1st data on every hour(s) for 60 data (5 hours)
+			for (var i = data.length-60; i < data.length; i++) {
+				dataChart[counter] = data[i];
+				counter++;
 			}
 
 			return dataChart;
 		}
 
-		// console.log(tempChartData);
-		// redrawChart(tempChartData, arusChartData, batChartData);
-		// redrawChart();
-		function redrawChart() {
+		function drawChart() {
 			var ctx = document.getElementById("allChart").getContext('2d');
 		    var lineChartData = {
 		    	labels :  tempChartData.map(function (a) { return a.time.substring(11,16); }),
@@ -184,6 +180,7 @@
 		    		}
 	    		]
 		    };
+		    console.log('5 min');
 			var createChart = new Chart(ctx, {
 		        type: 'line',
 		        data: lineChartData,
@@ -196,8 +193,6 @@
 			    	}
 			    }
 		    });
-			console.log(tempChartData.length);
-		    setTimeout(redrawChart, 30000);
 		}
 
 	</script>
