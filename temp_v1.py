@@ -14,7 +14,7 @@ filename_temp = dirpath + '/log/' + filename_date + '-temp.csv'
 filename_current = dirpath + '/log/' + filename_date + '-current.csv'
 filename_voltage = dirpath + '/log/' + filename_date + '-voltage.csv'
 filename_sensor = dirpath + '/log/sensor-now.txt'
-updateSensor = 120 #second interval update
+updateSensor = 300 #second interval update
 tt = time() #temp initial timer
 tn = time()
 
