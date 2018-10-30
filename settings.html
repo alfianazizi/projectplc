@@ -1,241 +1,253 @@
 <!DOCTYPE html>
 <html>
-  <head>
-  	<!-- Bootstrap -->
-  	<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
-	<script src="assets/jQuery/jquery-3.3.1.min.js"></script>
-	<script src="assets/jquery.csv.js"></script>
-	<script src="assets/moment.js"></script>
-	<script src="assets/js/bootstrap.min.js"></script>
-  	<link rel="stylesheet" href="assets/css/custom.css"/>
-  	<!-- <meta http-equiv="refresh" content="5" /> -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<head>
+	  	<!-- Bootstrap -->
+	  	<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
+		<script src="assets/jQuery/jquery-3.3.1.min.js"></script>
 
-    <!-- no cache -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-	<meta http-equiv="Pragma" content="no-cache" />
-	<meta http-equiv="Expires" content="0" />
+		<!-- check session -->
+		<script>
+			$.ajax({
+	            type: "POST",
+	            url: "checkSession.php",
+	            success: function(res){
+	                if(res == "0") {
+	                    window.location.href = "index.html"; 
+	                }
+	            },
+	            error: function(res) {
+	            	console.log(res);
+	            }
+		    });
+		</script>
+		<script src="assets/jquery.csv.js"></script>
+		<script src="assets/moment.js"></script>
+		<script src="assets/js/bootstrap.min.js"></script>
+	  	<link rel="stylesheet" href="assets/css/custom.css"/>
+	  	<!-- <meta http-equiv="refresh" content="5" /> -->
+	    <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>UPS Dashboard : Settings</title>
-  </head>
-  <body">
-    <div id="navbar"></div>
- <!-- include navbar -->
-    <script type="text/javascript">
-    	$(function() {
-		    $("#navbar").load("navbar.html");
-		});
-    </script>
-	<div class="container">
-		<div class="row">
-			<div class="col-sm-4">
-				<div class="panel panel-default">
-					<div class="panel-heading">Profile UPS</div>
-					<div class="panel-body">
-						<table>
-							<tr>
-								<td width="100">Nomor UPS</td>
-								<td>:</td>
-								<td>106</td>
-							</tr>
-							<tr>
-								<td>Alamat instalasi</td>
-								<td>:</td>
-							</tr>
-							<tr>
-								<td>IP Address</td>
-								<td>:</td>
-								<td id="ip-add"></td>
-							</tr>
-							<tr>
-								<td>Gateway</td>
-								<td>:</td>
-								<td id="gateway"></td>
-							</tr>
-						</table>
-					</div>
-				</div>
-				<button class="btn btn-default" data-toggle="modal" data-target="#accModal">Ganti Username/Password</button>
-			</div>
-			<div class="col-sm-8">
-				<div class="panel panel-default">
-					<div class="panel-heading">Change Network Address</div>
-					<div class="panel-body">
-						<form id="set-ip">
+	    <!-- no cache -->
+	    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+
+	    <title>UPS Dashboard : Settings</title>
+	</head>
+ 	<body">
+	    <div id="navbar"></div>
+	 <!-- include navbar -->
+	    <script type="text/javascript">
+	    	$(function() {
+			    $("#navbar").load("navbar.html");
+			});
+	    </script>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="panel panel-default">
+						<div class="panel-heading">Profile UPS</div>
+						<div class="panel-body">
 							<table>
-				            	<tr>
-				            		<td height="50" width="100">
-							            <label for='username'>IP Address</label>
-				            		</td>
-				            		<td height="50">
-				           				<input type='text' name='ip' placeholder="255.255.255.255" id="ip_form" required="required">
-				           				 / 
-				           				<input type="number" min="0" max="32" name="netmask" placeholder="32" id="netmask_form" required="required">
-				            		</td>
-				            	</tr>
-				            	<tr>
-				            		<td height="50" width="100">
-							            <label for='gateway'>Gateway</label>
-				            		</td>
-				            		<td height="50">
-				           				<input type='text' name='gateway' placeholder="255.255.255.255" id="gateway_form" required="required"><br />
-				            		</td>
-				            	</tr>
-				            </table>
-		            		<input type="submit" class="btn btn-default" value="Simpan">
-						</form>
+								<tr>
+									<td width="100">Nomor UPS</td>
+									<td>:</td>
+									<td>106</td>
+								</tr>
+								<tr>
+									<td>IP Address</td>
+									<td>:</td>
+									<td id="ip-add"></td>
+								</tr>
+								<tr>
+									<td>Gateway</td>
+									<td>:</td>
+									<td id="gateway"></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<button class="btn btn-default" data-toggle="modal" data-target="#accModal">Ganti Username/Password</button>
+				</div>
+				<div class="col-sm-8">
+					<div class="panel panel-default">
+						<div class="panel-heading">Change Network Address</div>
+						<div class="panel-body">
+							<form id="set-ip">
+								<table>
+					            	<tr>
+					            		<td height="50" width="100">
+								            <label for='username'>IP Address</label>
+					            		</td>
+					            		<td height="50">
+					           				<input type='text' name='ip' placeholder="255.255.255.255" id="ip_form" required="required">
+					           				 / 
+					           				<input type="number" min="0" max="32" name="netmask" placeholder="32" id="netmask_form" required="required">
+					            		</td>
+					            	</tr>
+					            	<tr>
+					            		<td height="50" width="100">
+								            <label for='gateway'>Gateway</label>
+					            		</td>
+					            		<td height="50">
+					           				<input type='text' name='gateway' placeholder="255.255.255.255" id="gateway_form" required="required"><br />
+					            		</td>
+					            	</tr>
+					            </table>
+			            		<input type="submit" class="btn btn-default" value="Simpan">
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div id="accModal" class="modal fade" role="dialog">
-	    <div class="modal-dialog">
+		<div id="accModal" class="modal fade" role="dialog">
+		    <div class="modal-dialog">
 
-	      <!-- Modal content-->
-	      <div class="modal-content">
-	        <div class="modal-header">
-	          <button type="button" class="close" data-dismiss="modal">&times;</button>
-	          <h4 class="modal-title">Edit Akun</h4>
-	        </div>
-	        <div class="modal-body">
-	          	<table>
-	            	<tr>
-	            		<td height="50" width="100">
-				            <label for='username'>Username</label>
-	            		</td>
-	            		<td height="50">
-	           				<input type='text' name='username' id='username' size='25' / required="required"><br />
-	            		</td>
-	            	</tr>
-	            	<tr>
-	            		<td height="50" width="100">
-				            <label for='password'>Password</label>
-	            		</td>
-	            		<td height="50">
-				            <input type='password' name='password' id='password' size='25' required="required" /><br />                            
-	            		</td>
-	            	</tr>
-	            	<tr>
-	            		<td height="50" width="100">
-				            <label for='confirm_password'>Confirm Password</label>
-	            		</td>
-	            		<td height="50">
-				            <input type='password' name='confirm_password' id='confirmPassword' size='25' required="required" /><br />                            
-	            		</td>
-	            	</tr>
-            	</table>
-	        </div>
-	        <div class="modal-footer">
-	          <a href="#"><button type="button" class="btn btn-default">Simpan</button></a>
-	        </div>
-	      </div>
-	    </div>
-	  </div>
+		      <!-- Modal content-->
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal">&times;</button>
+		          <h4 class="modal-title">Edit Akun</h4>
+		        </div>
+		        <div class="modal-body">
+		          	<table>
+		            	<tr>
+		            		<td height="50" width="100">
+					            <label for='username'>Username</label>
+		            		</td>
+		            		<td height="50">
+		           				<input type='text' name='username' id='username' size='25' / required="required"><br />
+		            		</td>
+		            	</tr>
+		            	<tr>
+		            		<td height="50" width="100">
+					            <label for='password'>Password</label>
+		            		</td>
+		            		<td height="50">
+					            <input type='password' name='password' id='password' size='25' required="required" /><br />                            
+		            		</td>
+		            	</tr>
+		            	<tr>
+		            		<td height="50" width="100">
+					            <label for='confirm_password'>Confirm Password</label>
+		            		</td>
+		            		<td height="50">
+					            <input type='password' name='confirm_password' id='confirmPassword' size='25' required="required" /><br />                            
+		            		</td>
+		            	</tr>
+	            	</table>
+		        </div>
+		        <div class="modal-footer">
+		          <a href="#"><button type="button" class="btn btn-default">Simpan</button></a>
+		        </div>
+		      </div>
+		    </div>
+		  </div>
 
-	<div id="restartModal" class="modal fade" role="dialog">
-	    <div class="modal-dialog">
-	      <!-- Modal content-->
-	      <div class="modal-content">
-	    	<div class="modal-header">
-	        	<button type="button" class="close" data-dismiss="modal">&times;</button>
-	        	<h4 class="modal-title">Konfirmasi</h4>
-        	</div>
-    		<div class="modal-body">
-    			Perangkat akan di-restart untuk menyimpan perubahan alamat IP. Tekan tombol 'Ya' untuk restart sekarang. Terima Kasih
-    		</div>
-    		<div class="modal-footer">
-	        	<a href="#"><button type="button" class="btn btn-default" id="confirmButton">Ya</button></a>
-	        </div>
-    	</div>
-    </div>
-
-    <div id="restModal" class="modal fade">
-	     	<!-- Modal content-->
-	      	<div class="modal-content">
+		<div id="restartModal" class="modal fade" role="dialog">
+		    <div class="modal-dialog">
+		      <!-- Modal content-->
+		      <div class="modal-content">
+		    	<div class="modal-header">
+		        	<button type="button" class="close" data-dismiss="modal">&times;</button>
+		        	<h4 class="modal-title">Konfirmasi</h4>
+	        	</div>
 	    		<div class="modal-body">
-	    			<h3 id="txt">Rebooting...</h3>
+	    			Perangkat akan di-restart untuk menyimpan perubahan alamat IP. Tekan tombol 'Ya' untuk restart sekarang. Terima Kasih
 	    		</div>
+	    		<div class="modal-footer">
+		        	<a href="#"><button type="button" class="btn btn-default" id="confirmButton">Ya</button></a>
+		        </div>
 	    	</div>
-    </div>
+	    </div>
 
-	  
-	<script type="text/javascript">
-		var resp;
-		readConf();
-		var ipIndex;
-		var routersIndex;
+	    <div id="restModal" class="modal fade">
+		     	<!-- Modal content-->
+		      	<div class="modal-content">
+		    		<div class="modal-body">
+		    			<h3 id="txt">Rebooting...</h3>
+		    		</div>
+		    	</div>
+	    </div>
 
-		function readConf() {
-		  	$.ajax({
-				type: "POST",  
-				url: "readFile.php",
-				async: false,
-				success: function(response)
-				{
-					resp = JSON.parse(response);
-					var counter = 0;
-					console.log(resp);
+		  
+		<script type="text/javascript">
+			var resp;
+			readConf();
+			var ipIndex;
+			var routersIndex;
 
-					var profile;
+			function readConf() {
+			  	$.ajax({
+					type: "POST",  
+					url: "readFile.php",
+					async: false,
+					success: function(response)
+					{
+						resp = JSON.parse(response);
+						var counter = 0;
+						console.log(resp);
 
-					for (var i=0; i<resp.length; i++) {
-						// cari yang depannya static ip_address
-						if(resp[i].substring(0,17) == "static ip_address") {
-							profile = document.getElementById("ip-add");
-							profile.textContent = resp[i].substring(18,36);
-							ipIndex = i;
+						var profile;
+
+						for (var i=0; i<resp.length; i++) {
+							// cari yang depannya static ip_address
+							if(resp[i].substring(0,17) == "static ip_address") {
+								profile = document.getElementById("ip-add");
+								profile.textContent = resp[i].substring(18,36);
+								ipIndex = i;
+							}
+							// cari yang depannya static routers
+							if(resp[i].substring(0,14) == "static routers") {
+								profile = document.getElementById("gateway");
+								profile.textContent = resp[i].substring(15,33);
+								routersIndex = i;
+							}
 						}
-						// cari yang depannya static routers
-						if(resp[i].substring(0,14) == "static routers") {
-							profile = document.getElementById("gateway");
-							profile.textContent = resp[i].substring(15,33);
-							routersIndex = i;
-						}
+
+					},
+					error: function(response) {
+						console.log(response);
 					}
+				});
+			}
 
-				},
-				error: function(response) {
-					console.log(response);
-				}
-			});
-		}
-
-		$('#set-ip').on('submit', function(e){
-			$('#restartModal').modal('show');
-			e.preventDefault();
-		});
-
-		$('#confirmButton').click(function(){
-			$('#restartModal').hide();
-			var ip = (document.getElementById('ip_form')).value;
-			var netmask = (document.getElementById('netmask_form')).value;
-			var gateway = (document.getElementById('gateway_form')).value;
-			resp[ipIndex] = 'static ip_address='+ip+'/'+netmask;
-			resp[routersIndex] = 'static routers='+gateway;
-			console.log(resp);
-
-			$.ajax({
-				type: "POST",  
-				url: "writeFile.php",
-				data: { resp : resp },
-				success: function(response) {
-					alert(response);
-				},
-				error: function(response) {
-					console.log(response);
-				}
+			$('#set-ip').on('submit', function(e){
+				$('#restartModal').modal('show');
+				e.preventDefault();
 			});
 
-			$.ajax({
-				type: "POST",  
-				url: "restartFile.php"
-			});
+			$('#confirmButton').click(function(){
+				$('#restartModal').hide();
+				var ip = (document.getElementById('ip_form')).value;
+				var netmask = (document.getElementById('netmask_form')).value;
+				var gateway = (document.getElementById('gateway_form')).value;
+				resp[ipIndex] = 'static ip_address='+ip+'/'+netmask;
+				resp[routersIndex] = 'static routers='+gateway;
+				console.log(resp);
 
-		});
-	</script>
-  </body>
+				$.ajax({
+					type: "POST",  
+					url: "writeFile.php",
+					data: { resp : resp },
+					success: function(response) {
+						alert(response);
+					},
+					error: function(response) {
+						console.log(response);
+					}
+				});
+
+				$.ajax({
+					type: "POST",  
+					url: "restartFile.php"
+				});
+
+			});
+		</script>
+  	</body>
 </html>
