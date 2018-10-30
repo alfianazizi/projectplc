@@ -1,7 +1,7 @@
 <?php
 	$lineArr = [];
 	$counter = 0;
-	if ($file = fopen("../../etc/dhcpcd.conf", "r")) {
+	if ($file = fopen("../../../etc/dhcpcd.conf", "r")) {
 		while (!feof($file)) {
 	        // if (fgets($file) != "\r\n") {
 		        $lineArr[$counter] = fgets($file);
