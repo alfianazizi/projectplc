@@ -136,7 +136,7 @@
 	    </div>
 	  </div>
 
-	  <div id="restartModal" class="modal fade" role="dialog">
+	<div id="restartModal" class="modal fade" role="dialog">
 	    <div class="modal-dialog">
 	      <!-- Modal content-->
 	      <div class="modal-content">
@@ -151,6 +151,15 @@
 	        	<a href="#"><button type="button" class="btn btn-default" id="confirmButton">Ya</button></a>
 	        </div>
     	</div>
+    </div>
+
+    <div id="restModal" class="modal fade">
+	     	<!-- Modal content-->
+	      	<div class="modal-content">
+	    		<div class="modal-body">
+	    			<h3 id="txt">Rebooting...</h3>
+	    		</div>
+	    	</div>
     </div>
 
 	  
@@ -201,6 +210,7 @@
 		});
 
 		$('#confirmButton').click(function(){
+			$('#restartModal').hide();
 			var ip = (document.getElementById('ip_form')).value;
 			var netmask = (document.getElementById('netmask_form')).value;
 			var gateway = (document.getElementById('gateway_form')).value;
@@ -213,7 +223,9 @@
 				url: "writeFile.php",
 				data: { resp : resp },
 				success: function(response) {
-					console.log(response);
+					// $('#restModal').modal('show');
+					// console.log(response);
+					alert(response);
 				},
 				error: function(response) {
 					console.log(response);
