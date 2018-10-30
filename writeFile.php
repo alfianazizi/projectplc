@@ -7,9 +7,6 @@
 	    // write to file
 	    file_put_contents("../../../etc/dhcpcd.conf", implode(PHP_EOL, $conf));
 
-	    print "Rebooting...";
-	    // restart device
-	    exec('sudo reboot');
-
+	    echo ("Rebooting...");
 	}
 ?>

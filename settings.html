@@ -223,14 +223,18 @@
 				url: "writeFile.php",
 				data: { resp : resp },
 				success: function(response) {
-					// $('#restModal').modal('show');
-					// console.log(response);
 					alert(response);
 				},
 				error: function(response) {
 					console.log(response);
 				}
 			});
+
+			$.ajax({
+				type: "POST",  
+				url: "restartFile.php"
+			});
+
 		});
 	</script>
   </body>
