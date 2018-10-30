@@ -10,5 +10,6 @@
 
 	    // restart device
 	    exec('sudo reboot');
+
 	}
 ?>
