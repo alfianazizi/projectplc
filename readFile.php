@@ -18,7 +18,7 @@
 	// echo "<script>console.log('".print_r($lineArr)."')</script>";
 	// echo "<script>console.log('".print_r($arr)."')</script>";
 	$whoami = exec('who am i');
-	echo "<script>console.log('".print_r($whoami)."')</script>";
+	echo json_encode($whoami);
 //	echo json_encode($lineArr);
 
 ?>
