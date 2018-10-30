@@ -56,17 +56,13 @@
 	    	<br>
 	    	
 		  	<div>
-		  		<table class="table" id="logTable">
+		  		<h4 align="center">Download Log Files</h4>
+		  		<table class="table">
 		  			<thead>
-		  				<th>Time</th>
-		  				<th>Temperature</th>
-		  				<th>Arus</th>
-		  				<th>Battery</th>
+		  				<th>File Name</th>
+		  				<th>Action</th>
 		  			</thead>
-		  			<tbody id="tbody">
-		  				<tr>
-		  					<td></td>
-		  				</tr>
+		  			<tbody id="logTable">
 		  			</tbody>
 		  		</table>
 		  	</div>
@@ -83,6 +79,7 @@
 			// console.log(batChartData);
 			var histChart;
 			firstDraw();
+			readLogDir();
 
 			setInterval(readAll, 300000);
 			setInterval(function() { generateChartData(tempData); }, 300000);
@@ -204,6 +201,26 @@
 			    });
 			}
 			
+			function readLogDir() {
+				$.ajax({
+					type: "GET",  
+					url: "readLogDir.php",
+					dataType: "text",
+					// async: false,
+					success: function(response)  
+					{
+						var obj = JSON.parse(response)
+						var tbody = document.getElementById('logTable');
+						for (var i = 0; i < Object.keys(obj).length; i++) {
+						    var tr = "<tr>";
+						    if(obj[i] != "sensor-now.txt") {
+						    	tr += "<td>" + obj[i] + "</td>" + "<td>" + obj[i] + "</td></tr>";
+    							tbody.innerHTML += tr;
+						    }
+						}
+					}   
+				});
+			}
 
 			$("#1d").click(function() {
 			    var data = histChart.config.data;
