@@ -124,7 +124,7 @@
 				            <label for='confirm_password'>Confirm Password</label>
 	            		</td>
 	            		<td height="50">
-				            <input type='password' name='confirm_password' id='password' size='25' required="required" /><br />                            
+				            <input type='password' name='confirm_password' id='confirmPassword' size='25' required="required" /><br />                            
 	            		</td>
 	            	</tr>
             	</table>
@@ -157,49 +157,67 @@
 	<script type="text/javascript">
 		var resp;
 		readConf();
+		var ipIndex;
+		var routersIndex;
 
 		function readConf() {
 		  	$.ajax({
-				type: "GET",  
-				url: "/etc/dhcpcd.conf",
-				dataType: "text",
+				type: "POST",  
+				url: "readFile.php",
 				async: false,
 				success: function(response)
 				{
-					resp = response.split(/[\n\r]+/);
-					// console.log(resp);
-					var profile = document.getElementById("ip-add");
-					profile.textContent = resp[11].substring(18,36);
-					profile = document.getElementById("gateway");
-					profile.textContent = resp[13].substring(15,33);
+					resp = JSON.parse(response);
+					var counter = 0;
+					console.log(resp);
+
+					var profile;
+
+					for (var i=0; i<resp.length; i++) {
+						// cari yang depannya static ip_address
+						if(resp[i].substring(0,17) == "static ip_address") {
+							profile = document.getElementById("ip-add");
+							profile.textContent = resp[i].substring(18,36);
+							ipIndex = i;
+						}
+						// cari yang depannya static routers
+						if(resp[i].substring(0,14) == "static routers") {
+							profile = document.getElementById("gateway");
+							profile.textContent = resp[i].substring(15,33);
+							routersIndex = i;
+						}
+					}
+
+				},
+				error: function(response) {
+					console.log(response);
 				}
 			});
 		}
 
-		$(document).ready(function() {
-			$('#set-ip').on('submit', function(e){
-				$('#restartModal').modal('show');
-				e.preventDefault();
-			});
-			$('#confirmButton').click(function(){
-				var ip = (document.getElementById('ip_form')).value;
-				var netmask = (document.getElementById('netmask_form')).value;
-				var gateway = (document.getElementById('gateway_form')).value;
-				resp[11] = 'static ip_address='+ip+'/'+netmask;
-				resp[13] = 'static routers='+gateway;
-				// console.log(resp);
+		$('#set-ip').on('submit', function(e){
+			$('#restartModal').modal('show');
+			e.preventDefault();
+		});
 
-				$.ajax({
-					type: "POST",  
-					url: "writeFile.php",
-					data: { resp : resp },
-					success: function(response) {
-						console.log(response);
-					},
-					error: function(response) {
-						console.log(response);
-					}
-				});
+		$('#confirmButton').click(function(){
+			var ip = (document.getElementById('ip_form')).value;
+			var netmask = (document.getElementById('netmask_form')).value;
+			var gateway = (document.getElementById('gateway_form')).value;
+			resp[ipIndex] = 'static ip_address='+ip+'/'+netmask;
+			resp[routersIndex] = 'static routers='+gateway;
+			console.log(resp);
+
+			$.ajax({
+				type: "POST",  
+				url: "writeFile.php",
+				data: { resp : resp },
+				success: function(response) {
+					console.log(response);
+				},
+				error: function(response) {
+					console.log(response);
+				}
 			});
 		});
 	</script>

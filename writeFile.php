@@ -2,7 +2,6 @@
 	if(isset($_POST['resp']))
 	{
 	    $conf = $_POST['resp'];
-
 	    // echo "<script>console.log('".json_encode($conf)."')</script>";
 
 	    // write to file

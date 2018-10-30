@@ -11,10 +11,6 @@
 	    fclose($file);
 	}
 
-	// foreach ($lineArr as $key => $value) {
-		// if($value != "\n") {
-		// echo $value;
-	// }
 	// echo "<script>console.log('".print_r($lineArr)."')</script>";
 	// echo "<script>console.log('".print_r($arr)."')</script>";
 
