@@ -109,42 +109,44 @@
 
 		      <!-- Modal content-->
 		      <div class="modal-content">
-		        <div class="modal-header">
-		          <button type="button" class="close" data-dismiss="modal">&times;</button>
-		          <h4 class="modal-title">Edit Akun</h4>
-		        </div>
-		        <div class="modal-body">
-		          	<table>
-		            	<tr>
-		            		<td height="50" width="100">
-					            <label for='username'>Username</label>
-		            		</td>
-		            		<td height="50">
-		           				<input type='text' name='username' id='username' size='25' / required="required"><br />
-		            		</td>
-		            	</tr>
-		            	<tr>
-		            		<td height="50" width="100">
-					            <label for='password'>Password</label>
-		            		</td>
-		            		<td height="50">
-					            <input type='password' name='password' id='password' size='25' required="required" /><br />                            
-		            		</td>
-		            	</tr>
-		            	<tr>
-		            		<td height="50" width="100">
-					            <label for='confirm_password'>Confirm Password</label>
-		            		</td>
-		            		<td height="50">
-					            <input type='password' name='confirm_password' id='confirmPassword' size='25' required="required" /><br />                            
-		            		</td>
-		            	</tr>
-	            	</table>
-		        </div>
-		        <div class="modal-footer">
-		          <a href="#"><button type="button" class="btn btn-default">Simpan</button></a>
-		        </div>
-		      </div>
+	        	<form action="phpscript/changeAccount.php" method="post">
+			        <div class="modal-header">
+			          <button type="button" class="close" data-dismiss="modal">&times;</button>
+			          <h4 class="modal-title">Edit Akun</h4>
+			        </div>
+			        <div class="modal-body">
+			          	<table>
+			            	<tr>
+			            		<td height="50" width="100">
+						            <label for='username'>Username</label>
+			            		</td>
+			            		<td height="50">
+			           				<input type='text' name='username' id='username' size='25' / required="required"><br />
+			            		</td>
+			            	</tr>
+			            	<tr>
+			            		<td height="50" width="100">
+						            <label for='password'>Password</label>
+			            		</td>
+			            		<td height="50">
+						            <input type='password' name='password' id='password' size='25' required="required" /><br />                            
+			            		</td>
+			            	</tr>
+			            	<tr>
+			            		<td height="50" width="100">
+						            <label for='confirm_password'>Confirm Password</label>
+			            		</td>
+			            		<td height="50">
+						            <input type='password' name='confirm_password' id='confirmPassword' size='25' required="required" /><br />                            
+			            		</td>
+			            	</tr>
+		            	</table>
+			        </div>
+			        <div class="modal-footer">
+			          <input type="submit" name="chAccountSubmit" class="btn btn-default" value="Simpan">
+			        </div>
+			      </div>
+	            </form>
 		    </div>
 		  </div>
 
@@ -190,7 +192,7 @@
 					{
 						resp = JSON.parse(response);
 						var counter = 0;
-						console.log(resp);
+						// console.log(resp);
 
 						var profile;
 
@@ -228,7 +230,7 @@
 				var gateway = (document.getElementById('gateway_form')).value;
 				resp[ipIndex] = 'static ip_address='+ip+'/'+netmask;
 				resp[routersIndex] = 'static routers='+gateway;
-				console.log(resp);
+				// console.log(resp);
 
 				$.ajax({
 					type: "POST",  
