@@ -1,201 +1,53 @@
 <!DOCTYPE html>
-<html>
-  <head>
-  	<!-- Bootstrap -->
-  	<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
-	<script src="assets/jQuery/jquery-3.3.1.min.js"></script>
-	<script src="assets/jquery.csv.js"></script>
-	<script src="assets/moment.js"></script>
-	<script src="assets/js/bootstrap.min.js"></script>
-  	<link rel="stylesheet" href="assets/css/custom.css"/>
-  	<!-- <meta http-equiv="refresh" content="5" /> -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="en" class="full">
+	<head>
+		<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
+		<script src="assets/jQuery/jquery-3.3.1.min.js"></script>
+		<script src="assets/js/bootstrap.min.js"></script>
+	  	<link rel="stylesheet" href="assets/css/custom.css"/>
+	    <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- no cache -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-	<meta http-equiv="Pragma" content="no-cache" />
-	<meta http-equiv="Expires" content="0" />
-    
-    <title>UPS Dashboard</title>
-  </head>
-  <body>
-  	<script type="text/javascript" src="assets/Chartjs/dist/Chart.min.js"></script>
-   	<div id="navbar"></div>
-   	 <!-- include navbar -->
-    <script type="text/javascript">
-    	$(function() {
-		    $("#navbar").load("navbar.html");
-		});
-    </script>
-  	<div class="container">
-	<div class="row">
-		<div class="col-sm-3">
-			<div class="panel panel-default">
-				<div class="panel-heading" align="center" style="background-color: #7e57c2;">Current Temperature</div>
-				<div class="panel-body" style="background-color: #9575cd;" id="temp">
-					<h1 align="center" id="currentTemp"></h1>
+	    <title>UPS Dashboard Login</title>
+	</head>
+	<body>
+		<br>
+		<br>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-4"></div>
+				<div class="col-sm-4">
+					<div class="panel panel-default">
+						<div class="panel-heading" align="center">Login Form</div>
+						<div class="panel-body">
+							<form action="loginScript.php" method="post">
+								<div class="error-message"><?php if(isset($message)) { echo $message; } ?></div>
+								<table align="center">
+					            	<tr>
+					            		<td height="50" width="100">
+								            <label for='username'>Username</label>
+					            		</td>
+					            		<td height="50">
+					           				<input type='text' name='username' required="required"><br />
+					            		</td>
+					            	</tr>
+					            	<tr>
+					            		<td height="50" width="100">
+								            <label for='password'>Password</label>
+					            		</td>
+					            		<td height="50">
+								            <input type='password' name='password' required="required" /><br />                            
+					            		</td>
+					            	</tr>
+				            	</table>
+					            	<tr><td colspan="2"><input type="submit" name="loginSubmit" value="Login" class="btn btn-default pull-right"></td></tr>
+				            </form>
+						</div>
+					</div>
 				</div>
+				<div class="col-sm-4"></div>
 			</div>
 		</div>
-		<div class="col-sm-3">
-			<div class="panel panel-default">
-				<div class="panel-heading" align="center" style="background-color: #f57c00;">Current Voltage</div>
-				<div class="panel-body" style="background-color: #ffcc80;" id="vol">
-					<h1 align="center" id="currentArus"></h1>
-				</div>
-			</div>
-		</div>
-		<div class="col-sm-3">
-			<div class="panel panel-default">
-				<div class="panel-heading" align="center" style="background-color: #2196f3;">Current Battery Capacity</div>
-				<div class="panel-body" style="background-color: #90caf9;" id="cap">
-					<h1 align="center" id="currentBat"></h1>
-				</div>
-			</div>
-		</div>
-		<div class="col-sm-3">
-			<div class="panel panel-default">
-				<div class="panel-heading" align="center" style="background-color: #4caf50;">Battery Remaining</div>
-				<div class="panel-body" style="background-color: #81c784;">
-					<h1 align="center">10 hours</h1>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-sm-12">
-			<div class="panel panel-default">
-				<div class="panel-heading">Last 60 Minutes Status</div>
-				<div class="panel-body">
-					<canvas id="allChart" width="500" height="100" border="0"></canvas>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
-	<script type="text/javascript">
-		var tempData = [];
-		var arusData = [];
-		var batData = [];
-		readAll();
-		readCurrent();
-		setInterval(readCurrent, 5000);
-		var tempChartData = generateChartData(tempData);
-		var arusChartData = generateChartData(arusData);
-		var batChartData = generateChartData(batData);
-		drawChart();
-
-		setInterval(readAll, 300000);
-		setInterval(function() { generateChartData(tempData); }, 300000);
-		setInterval(function() { generateChartData(arusData); }, 300000);
-		setInterval(function() { generateChartData(batData); }, 300000);
-		setInterval(drawChart, 300000);
-
-		// read all 3 logfiles
-		function readAll() {
-			var logData;
-			$.ajax({
-			  type: "GET",  
-			  url: "log/2018-10.csv",
-			  dataType: "text",
-			  async: false,
-			  success: function(response)  
-			  {
-				logData = $.csv.toObjects(response);
-			  }   
-			});
-			var i = 0;
-			while (logData[i] != null) {
-				tempData[i] = (({ time, temperature }) => ({ time, temperature }))(logData[i]);
-				arusData[i] = (({ time, arus }) => ({ time, arus }))(logData[i]);
-				batData[i] = (({ time, battery }) => ({ time, battery }))(logData[i]);
-				i++;
-			}
-		}
-
-		function readCurrent() {
-			var currData = [];
-			$.ajax({
-			  type: "GET",  
-			  url: "log/sensor-now.txt",
-			  dataType: "text",
-			  async: false,
-			  success: function(response)  
-			  {
-				currData = response.split(/[\n\r]+/);
-			  }   
-			});
-			var textWidget = document.getElementById("currentTemp");
-			textWidget.textContent = (Math.round(parseFloat(currData[0]) * 100) / 100)+'\u00B0'+'C';
-
-			var textWidget = document.getElementById("currentArus");
-			textWidget.textContent = (Math.round(parseFloat(currData[1]) * 100) / 100)+' A';
-			
-			var textWidget = document.getElementById("currentBat");
-			textWidget.textContent = (Math.round(parseFloat(currData[2]) * 100) / 100)+' %';
-		}
-
-		// read csv file untuk temperatur
-		function generateChartData(data) {
-			var dataChart = [];
-			var counter = 0;
-			// get only 1st data on every hour(s) for 60 data (5 hours)
-			for (var i = data.length-60; i < data.length; i++) {
-				dataChart[counter] = data[i];
-				counter++;
-			}
-
-			return dataChart;
-		}
-
-		function drawChart() {
-			var ctx = document.getElementById("allChart").getContext('2d');
-		    var lineChartData = {
-		    	labels :  tempChartData.map(function (a) { return a.time.substring(11,16); }),
-		    	datasets : [
-		    		{
-		    			label : "Temperatur",
-		    			data : tempChartData.map(function (a) { return a.temperature; }),
-		    			fill : false, 
-		    			borderColor : 'rgb(75, 192, 192)',
-		    			lineTension : 0.1
-		    		},
-		    		{
-		    			label : "Arus",
-		    			data : arusChartData.map(function (a) { return a.arus; }),
-		    			fill : false, 
-		    			borderColor : 'rgb(255, 153, 58)',
-		    			lineTension : 0.1
-		    		},
-		    		{
-		    			label : "Baterai",
-		    			data : batChartData.map(function (a) { return a.battery; }),
-		    			fill : false, 
-		    			borderColor : 'rgb(155, 66, 244)',
-		    			lineTension : 0.1
-		    		}
-	    		]
-		    };
-		    console.log('5 min');
-			var createChart = new Chart(ctx, {
-		        type: 'line',
-		        data: lineChartData,
-		        options: {
-			        tooltips: {
-			            mode: 'nearest'
-			        },
-			        hover: {
-			        	mode: 'nearest'
-			    	}
-			    }
-		    });
-		}
-
-	</script>
-    
-  </body>
+	</body>
 </html>
