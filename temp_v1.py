@@ -13,16 +13,9 @@ header_temp = ['time', 'temperature', 'arus', 'battery']
 
 #Specify direcroty path of sensor log
 dirpath = os.path.dirname(os.path.realpath(__file__))
-# filename_date = strftime("%Y-%m")
-filename_log = dirpath + '/log/' + filename_date + '.csv'
 filename_sensor = dirpath + '/log/sensor-now.txt'
-<<<<<<< HEAD
-updateSensor = 10 #second interval update
-=======
 
-#Define interval sensor update
 updateSensor = 300 #second interval update
->>>>>>> c32a10fec787863f8f9a733ffc46bcdcca46c552
 tt = time() #temp initial timer
 tn = time()
 
@@ -55,6 +48,7 @@ def sensor_now(filename, temp, current, voltage):
 
 while True:
 	filename_date = strftime("%Y-%m")
+	filename_log = dirpath + '/log/' + filename_date + '.csv'
 	temp = cpu.temperature
 	curr = random.randint(10,80)
 	volt = random.randint(60,100)
