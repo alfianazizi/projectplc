@@ -22,6 +22,7 @@
 		</script>
 		<script src="assets/jquery.csv.js"></script>
 		<script src="assets/moment.js"></script>
+		<script src="assets/moment-timezone-with-data.js"></script>
 		<script src="assets/js/bootstrap.min.js"></script>
 	  	<link rel="stylesheet" href="assets/css/custom.css"/>
 	    <meta charset="utf-8">
@@ -69,6 +70,9 @@
 		</div>
 
 		<script>
+			var fileDir;
+			readDate();
+
 			var tempData = [];
 			var arusData = [];
 			var batData = [];
@@ -107,6 +111,13 @@
 					i++;
 				}
 				// console.log(tempData);
+			}
+
+			function readDate() {
+				var now = moment().tz('Asia/Jakarta');
+				var year = (moment(now).year()).toString();
+				var month = (moment(now).month()+1).toString();
+				fileDir = 'log/'+year+'-'+month+'.csv';
 			}
 
 			function generateChartData(data) {
@@ -216,7 +227,7 @@
 						    if(obj[i] != "sensor-now.txt") {
 						    	tr += 
 						    	"<td>" + obj[i] + "</td>" + "<td><form method='get' action='log/" + obj[i] + "'><button class='btn btn-default' type='submit'>Download</button></form></td></tr>";
-						    		console.log(tr);
+						    		// console.log(tr);
     							tbody.innerHTML += tr;
 						    }
 						}

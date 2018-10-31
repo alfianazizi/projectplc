@@ -22,6 +22,7 @@
 		</script>
 		<script src="assets/jquery.csv.js"></script>
 		<script src="assets/moment.js"></script>
+		<script src="assets/moment-timezone-with-data.js"></script>
 		<script src="assets/js/bootstrap.min.js"></script>
 	  	<link rel="stylesheet" href="assets/css/custom.css"/>
 
@@ -95,6 +96,9 @@
 	</div>
 
 	<script type="text/javascript">
+		var fileDir;
+		readDate();
+
 		var tempData = [];
 		var arusData = [];
 		var batData = [];
@@ -117,7 +121,7 @@
 			var logData;
 			$.ajax({
 			  type: "GET",  
-			  url: "log/2018-10.csv",
+			  url: fileDir,
 			  dataType: "text",
 			  async: false,
 			  success: function(response)  
@@ -132,6 +136,13 @@
 				batData[i] = (({ time, battery }) => ({ time, battery }))(logData[i]);
 				i++;
 			}
+		}
+
+		function readDate() {
+			var now = moment().tz('Asia/Jakarta');
+			var year = (moment(now).year()).toString();
+			var month = (moment(now).month()+1).toString();
+			fileDir = 'log/'+year+'-'+month+'.csv';
 		}
 
 		function readCurrent() {
