@@ -1,6 +1,9 @@
 * {
 	font-family: 'Roboto', sans-serif;
 }
+body {
+  background-color:#fafafa;
+}
 .navbar-default {
   background-color:white;
   background-image: none;
@@ -12,6 +15,10 @@
  	color: #333;
  	background-color: #00838f;
  }
+
+.panel-default {
+  border: 0px;
+}
 
 .panel-default .panel-heading {
   background-color:#00838f;
