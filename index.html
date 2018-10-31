@@ -3,6 +3,22 @@
 	<head>
 		<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
 		<script src="assets/jQuery/jquery-3.3.1.min.js"></script>
+
+		<!-- check session -->
+		<script>
+			$.ajax({
+	            type: "POST",
+	            url: "phpscript/checkSession.php",
+	            success: function(res){
+	                if(res == "1") {
+	                    window.location.href = "home.html"; 
+	                }
+	            },
+	            error: function(res) {
+	            	console.log(res);
+	            }
+		    });
+		</script>
 		<script src="assets/js/bootstrap.min.js"></script>
 	  	<link rel="stylesheet" href="assets/css/custom.css"/>
 	    <meta charset="utf-8">
