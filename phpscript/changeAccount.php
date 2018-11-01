@@ -9,7 +9,7 @@ if(isset($_SESSION["userid"])) {
 
 $server = "localhost"; //ganti sesuai server Anda
 $username = "root"; //ganti sesuai username Anda
-$password = ""; //ganti sesuai password Anda
+$password = "root"; //ganti sesuai password Anda
 $db_name = "projectplc"; //ganti sesuatu nama database Anda
 $conn = new mysqli($server,$username,$password,$db_name);
 
