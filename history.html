@@ -47,7 +47,7 @@
 	    </script>
 
 		<div class="container" align="center">
-			<select id="selMonth" onchange="readAll(this.options[this.selectedIndex].value)"></select>
+			<select class="form-control" id="selMonth" style="width: 150px;" onchange="readAll(this.options[this.selectedIndex].value)"></select>
 			<canvas id="histChart" width="500" height="200" border="0"></canvas>
 			<div align="center">
 	    		<button class="btn btn-default" id="1d">1 Hari</button>
@@ -89,6 +89,9 @@
 
 			function addSelection() {
 				document.getElementById("selMonth").innerHTML = "";
+				var year = (moment().year()).toString();
+				var month = (moment().month()+1).toString();
+
 				$.ajax({
 					type: "GET",  
 					url: "phpscript/readLogDir.php",
@@ -100,15 +103,16 @@
 						for (var i = 0; i < Object.keys(obj).length; i++) {
 						    var opt = "<option";
 						    if(obj[i] != "sensor-now.txt") {
-						    	// last file -> selected
-						    	if (i == Object.keys(obj).length-2) {
+						    	// file with current year and month in its name -> selected
+						    	var formattedMonth = moment(obj[i].substring(5,7), 'MM').format('MMMM');
+						    	if (obj[i].substring(0,4) == year && obj[i].substring(5,7) == month) {
 						    		opt += 
-							    	" value='log/" + obj[i] + "' selected='selected'>Bulan " + obj[i].substring(5,7) + " Tahun " + obj[i].substring(0,4) + "</option>";
+							    	" value='log/" + obj[i] + "' selected='selected'>" + formattedMonth + " " + obj[i].substring(0,4) + "</option>";
 						    		// console.log(opt);
 									selMonth.innerHTML += opt;
 						    	} else {
 							    	opt += 
-							    	" value='log/" + obj[i] + "'>Bulan " + obj[i].substring(5,7) + " Tahun " + obj[i].substring(0,4) + "</option>";
+							    	" value='log/" + obj[i] + "'>" + formattedMonth + " " + obj[i].substring(0,4) + "</option>";
 						    		// console.log(opt);
 									selMonth.innerHTML += opt;
 								}

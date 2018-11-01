@@ -39,3 +39,7 @@ body {
 .btn-default:hover {
 	background-color: #80deea;
 }
+
+.form-control .input-mini {
+  width: 60px;
+}
