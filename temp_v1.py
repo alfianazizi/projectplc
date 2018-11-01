@@ -7,17 +7,21 @@ import os
 import random
 
 cpu = CPUTemperature()
+
+#Define header for csv log files
 header_temp = ['time', 'temperature', 'arus', 'battery']
+
+#Specify direcroty path of sensor log
 dirpath = os.path.dirname(os.path.realpath(__file__))
-filename_date = strftime("%Y-%m")
-# filename_temp = dirpath + '/log/' + filename_date + '-temp.csv'
-# filename_current = dirpath + '/log/' + filename_date + '-current.csv'
-# filename_voltage = dirpath + '/log/' + filename_date + '-voltage.csv'
+# filename_date = strftime("%Y-%m")
 filename_log = dirpath + '/log/' + filename_date + '.csv'
 filename_sensor = dirpath + '/log/sensor-now.txt'
+
+#Define interval sensor update
 updateSensor = 300 #second interval update
 tt = time() #temp initial timer
 tn = time()
+
 
 print("Logging Temperature")
 
@@ -38,22 +42,6 @@ def write_sensor(filename, data):
 			temp_writer.writerow(header_temp)
 		temp_writer.writerow(data)
 
-# def write_current(filename,data):
-# 	with open(filename, 'a') as log:
-# 		file_is_empty = os.stat(filename).st_size == 0
-# 		current_writer = writer(log, lineterminator='\n')
-# 		if file_is_empty:
-# 			current_writer.writerow(header_current)
-# 		current_writer.writerow(data)
-
-# def write_voltage(filename,data):
-# 	with open(filename, 'a') as log:
-# 		file_is_empty = os.stat(filename).st_size == 0
-# 		voltage_writer = writer(log, lineterminator='\n')
-# 		if file_is_empty:
-# 			voltage_writer.writerow(header_voltage)
-# 		voltage_writer.writerow(data)
-
 def sensor_now(filename, temp, current, voltage):
 	with open(filename, 'w') as now:
 		now.write(str(temp) + '\n')
@@ -62,6 +50,7 @@ def sensor_now(filename, temp, current, voltage):
 
 
 while True:
+	filename_date = strftime("%Y-%m")
 	temp = cpu.temperature
 	curr = random.randint(10,80)
 	volt = random.randint(60,100)
