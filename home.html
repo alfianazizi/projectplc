@@ -96,6 +96,8 @@
 	</div>
 
 	<script type="text/javascript">
+		readCurrent();
+		
 		var fileDir;
 		readDate();
 
@@ -103,7 +105,6 @@
 		var arusData = [];
 		var batData = [];
 		readAll();
-		readCurrent();
 		setInterval(readCurrent, 5000);
 		var tempChartData = generateChartData(tempData);
 		var arusChartData = generateChartData(arusData);

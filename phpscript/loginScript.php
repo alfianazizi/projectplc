@@ -18,10 +18,10 @@ if ($result->num_rows == 1) {
 	$_SESSION['userid'] = $res['id_user'];
 	echo "<script>console.log('".json_encode($_SESSION['userid'])."')</script>";
 	$conn->close();
-	header("Location:../home.html");
+	header("Location: ../home.html");
 }
 else {
-	header("Location:../index.html");
+	header("Location: ../index.html");
 }
 
 ?>
