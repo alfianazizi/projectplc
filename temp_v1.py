@@ -15,7 +15,7 @@ filename_date = strftime("%Y-%m")
 # filename_voltage = dirpath + '/log/' + filename_date + '-voltage.csv'
 filename_log = dirpath + '/log/' + filename_date + '.csv'
 filename_sensor = dirpath + '/log/sensor-now.txt'
-updateSensor = 300 #second interval update
+updateSensor = 10 #second interval update
 tt = time() #temp initial timer
 tn = time()
 
