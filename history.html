@@ -46,7 +46,8 @@
 			});
 	    </script>
 
-		<div class="container">
+		<div class="container" align="center">
+			<select id="selMonth" onchange="readAll(this.options[this.selectedIndex].value)"></select>
 			<canvas id="histChart" width="500" height="200" border="0"></canvas>
 			<div align="center">
 	    		<button class="btn btn-default" id="1d">1 Hari</button>
@@ -70,68 +71,91 @@
 		</div>
 
 		<script>
-			var fileDir;
-			readDate();
+			addSelection();
+			setInterval(addSelection, 300000);
+			var data30 = [];
+			var data14 = [];
+			var data7 = [];
+			var data1 = [];
+			var dir = readDate();
+			readAll(dir);
+			setInterval(function(){ 
+				dir = readDate();
+				readAll(dir);
+			}, 300000);
 
-			var tempData = [];
-			var arusData = [];
-			var batData = [];
-			readAll();
-			var tempChartData = generateChartData(tempData);
-			var arusChartData = generateChartData(arusData);
-			var batChartData = generateChartData(batData);
-			// console.log(batChartData);
 			var histChart;
-			firstDraw();
 			readLogDir();
 
-			setInterval(readAll, 300000);
-			setInterval(function() { generateChartData(tempData); }, 300000);
-			setInterval(function() { generateChartData(arusData); }, 300000);
-			setInterval(function() { generateChartData(batData); }, 300000);
-			setInterval(firstDraw, 300000);
+			function addSelection() {
+				document.getElementById("selMonth").innerHTML = "";
+				$.ajax({
+					type: "GET",  
+					url: "phpscript/readLogDir.php",
+					dataType: "text",
+					success: function(response)  
+					{
+						var obj = JSON.parse(response)
+						var selMonth = document.getElementById('selMonth');
+						for (var i = 0; i < Object.keys(obj).length; i++) {
+						    var opt = "<option";
+						    if(obj[i] != "sensor-now.txt") {
+						    	// last file -> selected
+						    	if (i == Object.keys(obj).length-2) {
+						    		opt += 
+							    	" value='log/" + obj[i] + "' selected='selected'>Bulan " + obj[i].substring(5,7) + " Tahun " + obj[i].substring(0,4) + "</option>";
+						    		// console.log(opt);
+									selMonth.innerHTML += opt;
+						    	} else {
+							    	opt += 
+							    	" value='log/" + obj[i] + "'>Bulan " + obj[i].substring(5,7) + " Tahun " + obj[i].substring(0,4) + "</option>";
+						    		// console.log(opt);
+									selMonth.innerHTML += opt;
+								}
+						    }
+						}
+					}   
+				});
+			}
 
-			function readAll() {
+			function readAll(urlLog) {
+				console.log(urlLog);
 				var logData;
 				$.ajax({
 				  type: "GET",  
-				  url: "log/2018-10.csv",
+				  url: urlLog,
 				  dataType: "text",
 				  async: false,
 				  success: function(response)  
 				  {
 					logData = $.csv.toObjects(response);
+					generateChartData(logData);
+					// firstDraw();
 				  }   
 				});
-				var i = 0;
-				while (logData[i] != null) {
-					tempData[i] = (({ time, temperature }) => ({ time, temperature }))(logData[i]);
-					arusData[i] = (({ time, arus }) => ({ time, arus }))(logData[i]);
-					batData[i] = (({ time, battery }) => ({ time, battery }))(logData[i]);
-					i++;
-				}
-				// console.log(tempData);
 			}
 
 			function readDate() {
 				var now = moment().tz('Asia/Jakarta');
 				var year = (moment(now).year()).toString();
 				var month = (moment(now).month()+1).toString();
-				fileDir = 'log/'+year+'-'+month+'.csv';
+				var fileDir = 'log/'+year+'-'+month+'.csv';
+				return fileDir;
 			}
 
 			function generateChartData(data) {
-				var data30 = [];
-				var data14 = [];
-				var data7 = [];
-				var data1 = [];
+				data30 = [];
+				data14 = [];
+				data7 = [];
+				data1 = [];
 				var counter30 = 0;
 				var counter14 = 0;
 				var counter7 = 0;
 				var counter1 = 0;
+				// console.log(data);
 				// get only 1st data on every 5 minute(s)
 				// get current datetime
-				var now = moment();
+				var now = moment(data[data.length-1].time).format('YYYY-MM-DD HH:mm:ss');
 				var now14 = moment(now).subtract(14, 'd');
 				var now7 = moment(now).subtract(7, 'd');
 				var now1 = moment(now).subtract(1, 'd');
@@ -172,41 +196,36 @@
 					i++;
 				}
 
-				var allChartData = [data30, data14, data7, data1];
-				console.log(allChartData);
-				// console.log(allChartData);
-				return allChartData;
-			}
-
-			function firstDraw() {
-				var ctx = document.getElementById("histChart").getContext('2d');
 			    var lineChartData = {
-			    	labels :  tempChartData[3].map(function (a) { return a.time; }),
+			    	labels :  data1.map(function (a) { return a.time; }),
 			    	datasets : [
 			    		{
 			    			label : "Temperatur",
-			    			data : tempChartData[3].map(function (a) { return a.temperature; }),
+			    			data : data1.map(function (a) { return a.temperature; }),
 			    			fill : false, 
 			    			borderColor : 'rgb(75, 192, 192)',
 			    			lineTension : 0.1
 			    		},
 			    		{
 			    			label : "Arus",
-			    			data : arusChartData[3].map(function (a) { return a.arus; }),
+			    			data : data1.map(function (a) { return a.arus; }),
 			    			fill : false, 
 			    			borderColor : 'rgb(255, 153, 58)',
 			    			lineTension : 0.1
 			    		},
 			    		{
 			    			label : "Baterai",
-			    			data : batChartData[3].map(function (a) { return a.battery; }),
+			    			data : data1.map(function (a) { return a.battery; }),
 			    			fill : false, 
 			    			borderColor : 'rgb(155, 66, 244)',
 			    			lineTension : 0.1
 			    		}
 		    		]
 			    };
-				histChart = new Chart(ctx, {
+			    console.log(data30[0]);
+			    if (histChart) histChart.chart.destroy();
+				var ctx = document.getElementById("histChart").getContext('2d');
+				window.histChart = new Chart(ctx, {
 			        type: 'line',
 			        data: lineChartData
 			    });
@@ -217,7 +236,6 @@
 					type: "GET",  
 					url: "phpscript/readLogDir.php",
 					dataType: "text",
-					// async: false,
 					success: function(response)  
 					{
 						var obj = JSON.parse(response)
@@ -237,37 +255,37 @@
 
 			$("#1d").click(function() {
 			    var data = histChart.config.data;
-			    data.labels = tempChartData[3].map(function (a) { return a.time; });
-			    data.datasets[0].data = tempChartData[3].map(function (a) { return a.temperature; });
-			    data.datasets[1].data = arusChartData[3].map(function (a) { return a.arus; });
-			    data.datasets[2].data = batChartData[3].map(function (a) { return a.battery; });
+			    data.labels = data1.map(function (a) { return a.time; });
+			    data.datasets[0].data = data1.map(function (a) { return a.temperature; });
+			    data.datasets[1].data = data1.map(function (a) { return a.arus; });
+			    data.datasets[2].data = data1.map(function (a) { return a.battery; });
 			    histChart.update();
 			});
 
 			$("#7d").click(function() {
 			    var data = histChart.config.data;
-			    data.labels = tempChartData[2].map(function (a) { return a.time; });
-			    data.datasets[0].data = tempChartData[2].map(function (a) { return a.temperature; });
-			    data.datasets[1].data = arusChartData[2].map(function (a) { return a.arus; });
-			    data.datasets[2].data = batChartData[2].map(function (a) { return a.battery; });
+			    data.labels = data7.map(function (a) { return a.time; });
+			    data.datasets[0].data = data7.map(function (a) { return a.temperature; });
+			    data.datasets[1].data = data7.map(function (a) { return a.arus; });
+			    data.datasets[2].data = data7.map(function (a) { return a.battery; });
 			    histChart.update();
 			});
 
 			$("#14d").click(function() {
 			    var data = histChart.config.data;
-			    data.labels = tempChartData[1].map(function (a) { return a.time; });
-			    data.datasets[0].data = tempChartData[1].map(function (a) { return a.temperature; });
-			    data.datasets[1].data = arusChartData[1].map(function (a) { return a.arus; });
-			    data.datasets[2].data = batChartData[1].map(function (a) { return a.battery; });
+			    data.labels = data14.map(function (a) { return a.time; });
+			    data.datasets[0].data = data14.map(function (a) { return a.temperature; });
+			    data.datasets[1].data = data14.map(function (a) { return a.arus; });
+			    data.datasets[2].data = data14.map(function (a) { return a.battery; });
 			    histChart.update();
 			});
 
 			$("#30d").click(function() {
 			    var data = histChart.config.data;
-			    data.labels = tempChartData[0].map(function (a) { return a.time; });
-			    data.datasets[0].data = tempChartData[0].map(function (a) { return a.temperature; });
-			    data.datasets[1].data = arusChartData[0].map(function (a) { return a.arus; });
-			    data.datasets[2].data = batChartData[0].map(function (a) { return a.battery; });
+			    data.labels = data30.map(function (a) { return a.time; });
+			    data.datasets[0].data = data30.map(function (a) { return a.temperature; });
+			    data.datasets[1].data = data30.map(function (a) { return a.arus; });
+			    data.datasets[2].data = data30.map(function (a) { return a.battery; });
 			    histChart.update();
 			});
 			

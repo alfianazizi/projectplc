@@ -173,8 +173,10 @@
 			var counter = 0;
 			// get only 1st data on every hour(s) for 60 data (5 hours)
 			for (var i = data.length-60; i < data.length; i++) {
-				dataChart[counter] = data[i];
-				counter++;
+				if (data[i]) {
+					dataChart[counter] = data[i];
+					counter++;
+				}
 			}
 
 			return dataChart;
