@@ -23,6 +23,10 @@ MOSI = 10
 CS   = 8
 mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
+#define LCD I2C
+
+lcd = I2C_LCD_driver.lcd()
+
 #Define header for csv log files
 header_temp = ['time', 'temperature', 'arus', 'battery']
 
@@ -125,7 +129,10 @@ def main():
 
 			if t2 - tnow >= 5:
 				print('\nAverage Temperature: ' + str(temp))
-	                        print('\nAverage Voltage 1: ' + str(voltage_volt[0]))
+				for i in range(4):
+	            	print('Average Voltage ' + str(i) + ' : ' + str(voltage_volt[i]))
+	            lcd.lcd_display_string("Temp: " + str(round(temp, 2)), 1)
+	            lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
 				sensor_now(filename_sensor, temp, curr, voltage_volt[0])
 				tnow = time()
 
