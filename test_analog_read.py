@@ -33,6 +33,7 @@ header_temp = ['time', 'temperature', 'arus', 'battery']
 #Specify direcroty path of sensor log
 dirpath = os.path.dirname(os.path.realpath(__file__))
 filename_sensor = dirpath + '/log/sensor-now.txt'
+filename_battery = dirpath + '/log/battery-now.txt'
 
 #Define array of analog read value
 global values
@@ -74,6 +75,13 @@ def sensor_now(filename, temp, current, voltage):
 		now.write(str(temp) + '\n')
 		now.write(str(current) + '\n')
 		now.write(str(voltage) + '\n')
+
+def battery_now(filename, battery1, battery2, battery3, battery4):
+	with open(filename, 'w') as now:
+		now.write(str(battery1) + '\n')
+		now.write(str(battery2) + '\n')
+		now.write(str(battery3) + '\n')
+		now.write(str(battery4) + '\n')
 
 #module to write default IP Address in Raspberry Pi
 def set_default(filename):
@@ -123,8 +131,8 @@ def main():
 
 	#initiate analog data reading for MCP3008 and DHT22 average value
 	for i in range (8):
-		analogData_ch[i] = averagedata.averageData(5, 5, 'Analog Values Channel ' + str(i))
-	tempData = averagedata.averageData(5, 5, 'Temperature Values')
+		analogData_ch[i] = averagedata.averageData(10, 10, 'Analog Values Channel ' + str(i))
+	tempData = averagedata.averageData(10, 10, 'Temperature Values')
 
 
 	try:
@@ -169,7 +177,7 @@ def main():
 				write_sensor(filename_log, sensorData)
 				tlog = time()
 
-			if t2 - tnow >= 5:
+			if t2 - tnow >= 10:
 				print('\nAverage Temperature: ' + str(temp))
         			print('Average Voltage 1 : ' + str(battery_1))
 			 	print('Average Voltage 2 : ' + str(battery_2))
@@ -178,6 +186,7 @@ def main():
 			      	lcd.lcd_display_string("Temp: " + str(temp) + degree + "C", 1)
 		    		lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
 				sensor_now(filename_sensor, temp, curr, voltage_volt[0])
+				battery_now(filename_battery, battery_1, battery_2, battery_3, battery_4)
 				tnow = time()
 
 
