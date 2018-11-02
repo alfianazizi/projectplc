@@ -130,9 +130,9 @@ def main():
 			if t2 - tnow >= 5:
 				print('\nAverage Temperature: ' + str(temp))
 				for i in range(4):
-	            	print('Average Voltage ' + str(i) + ' : ' + str(voltage_volt[i]))
-	            lcd.lcd_display_string("Temp: " + str(round(temp, 2)), 1)
-	            lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
+	            			print('Average Voltage ' + str(i) + ' : ' + str(voltage_volt[i]))
+	            		lcd.lcd_display_string("Temp: " + str(round(temp, 2)), 1)
+	            		lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
 				sensor_now(filename_sensor, temp, curr, voltage_volt[0])
 				tnow = time()
 
