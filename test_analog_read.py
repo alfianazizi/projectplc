@@ -123,8 +123,8 @@ def main():
 
 	#initiate analog data reading for MCP3008 and DHT22 average value
 	for i in range (8):
-		analogData_ch[i] = averagedata.averageData(10, 10, 'Analog Values Channel ' + str(i))
-	tempData = averagedata.averageData(10, 10, 'Temperature Values')
+		analogData_ch[i] = averagedata.averageData(5, 5, 'Analog Values Channel ' + str(i))
+	tempData = averagedata.averageData(5, 5, 'Temperature Values')
 
 
 	try:
