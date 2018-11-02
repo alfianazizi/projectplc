@@ -17,10 +17,10 @@ import I2C_LCD_driver
 import averagedata
 
 # Software SPI configuration for MCP3008:
-CLK  = 18
-MISO = 23
-MOSI = 24
-CS   = 25
+CLK  = 11
+MISO = 9
+MOSI = 10
+CS   = 8
 mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
 
@@ -32,7 +32,7 @@ values = [0]*8
 DHT_number = dht.DHT22
 
 #Define DHT PIN
-DHT_input_pin = 22 
+DHT_input_pin = 22
 
 
 #Define header for csv log files
@@ -44,16 +44,10 @@ filename_sensor = dirpath + '/log/sensor-now.txt'
 
 #Define interval sensor update
 updateSensor = 300 #second interval update
-tlog = time() #temp initial timer
-tnow = time()
-tread = time()
 
-def get_temperature(dhttype, pin):
+def get_temperature(dhttype, dhtpin):
 	humi, temp = dht.read_retry(dhttype, dhtpin)
 	return temp
-
-def get_voltage()
-	
 
 def get_sensor_data(temperature, current, voltage):
 	sensor_data = []
@@ -84,6 +78,11 @@ print("Logging Temperature")
 def main():
 	voltage_analog = [0]*4
 	voltage_volt = [0]*4
+	analogData_ch = [0]*8
+	temp_read = 0
+	tlog = time() #temp initial timer
+	tnow = time()
+	tread = time()
 	for i in range (8):
 		analogData_ch[i] = averagedata.averageData(10, 10, 'Analog Values Channel ' + str(i))
 	tempData = averagedata.averageData(10, 10, 'Temperature Values')
@@ -92,6 +91,7 @@ def main():
 			t1 = time()
 			t2 = time()
 			t3 = time()
+			curr = random.randint(10,80)
 			filename_date = strftime("%Y-%m")
 			filename_log = dirpath + '/log/' + filename_date + '.csv'
 
@@ -111,15 +111,15 @@ def main():
 			#get DHT22 temperature
 			tempData.updateData(temp_read)
 			temp = tempData.runningAverage()
-			print('\nAverage Temperature: ' + str(temp))
-			
-			sensorData = get_sensor_data(temp, curr, volt)
+			sensorData = get_sensor_data(temp, curr, voltage_volt[0])
 			if t1 - tlog >= updateSensor:
 				write_sensor(filename_log, sensorData)
 				tlog = time()
 
 			if t2 - tnow >= 5:
-				sensor_now(filename_sensor, cpu.temperature, curr, volt)
+				print('\nAverage Temperature: ' + str(temp))
+	                        print('\nAverage Voltage 1: ' + str(voltage_volt[0]))
+				sensor_now(filename_sensor, temp, curr, voltage_volt[0])
 				tnow = time()
 
 
