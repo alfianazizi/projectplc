@@ -23,6 +23,12 @@ MOSI = 10
 CS   = 8
 mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
+#Define header for csv log files
+header_temp = ['time', 'temperature', 'arus', 'battery']
+
+#Specify direcroty path of sensor log
+dirpath = os.path.dirname(os.path.realpath(__file__))
+filename_sensor = dirpath + '/log/sensor-now.txt'
 
 #Define array of analog read value
 global values
@@ -33,17 +39,6 @@ DHT_number = dht.DHT22
 
 #Define DHT PIN
 DHT_input_pin = 22
-
-
-#Define header for csv log files
-header_temp = ['time', 'temperature', 'arus', 'battery']
-
-#Specify direcroty path of sensor log
-dirpath = os.path.dirname(os.path.realpath(__file__))
-filename_sensor = dirpath + '/log/sensor-now.txt'
-
-#Define interval sensor update
-updateSensor = 300 #second interval update
 
 def get_temperature(dhttype, dhtpin):
 	humi, temp = dht.read_retry(dhttype, dhtpin)
@@ -76,17 +71,29 @@ def sensor_now(filename, temp, current, voltage):
 
 print("Logging Temperature")
 def main():
-	voltage_analog = [0]*4
+
+	#Define interval sensor update
+	updateSensor = 300 #second interval update
+
+	#initiate array of sensor data
+	mcp_analog = [0]*8
 	voltage_volt = [0]*4
 	analogData_ch = [0]*8
 	temp_read = 0
+
+	#define timer 
 	tlog = time() #temp initial timer
 	tnow = time()
 	tread = time()
+
+	#initiate analog data reading for MCP3008 and DHT22 average value
 	for i in range (8):
 		analogData_ch[i] = averagedata.averageData(10, 10, 'Analog Values Channel ' + str(i))
 	tempData = averagedata.averageData(10, 10, 'Temperature Values')
+
+
 	try:
+		#begin loop
 		while True:
 			t1 = time()
 			t2 = time()
@@ -100,13 +107,13 @@ def main():
 				for i in range(8):
 					values[i] = mcp.read_adc(i)
 					analogData_ch[i].updateData(values[i])
+					mcp_analog[i] = analogData_ch[i].runningAverage()
 				temp_read = get_temperature(DHT_number, DHT_input_pin)
 				tread = time()
 
 			#get voltage analog value then convert to actual voltage
 			for i in range(4):
-				voltage_analog[i] = analogData_ch[i].runningAverage()
-				voltage_volt[i] = (voltage_analog[i] / 1023) * 16.5
+				voltage_volt[i] = (mcp_analog[i] / 1023) * 16.5
 
 			#get DHT22 temperature
 			tempData.updateData(temp_read)
