@@ -156,7 +156,7 @@ def main():
 
 			#get voltage analog value then convert to actual voltage
 			voltage_volt[0] = (mcp_analog[0] / 1023) * 13.8
-			voltage_volt[1] = (mcp_analog[1] / 1023) * 30.02
+			voltage_volt[1] = (mcp_analog[1] / 1023) * 29.66
 			voltage_volt[2] = (mcp_analog[2] / 1023) * 37.29
 			voltage_volt[3] = (mcp_analog[3] / 1023) * 57.06
 
