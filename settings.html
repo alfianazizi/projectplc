@@ -182,6 +182,7 @@
 			readConf();
 			var ipIndex;
 			var routersIndex;
+			var domainIndex;
 
 			function readConf() {
 			  	$.ajax({
@@ -192,7 +193,7 @@
 					{
 						resp = JSON.parse(response);
 						var counter = 0;
-						// console.log(resp);
+						console.log(resp);
 
 						var profile;
 
@@ -208,6 +209,10 @@
 								profile = document.getElementById("gateway");
 								profile.textContent = resp[i].substring(15,33);
 								routersIndex = i;
+							}
+							// cari yang depannya static domain_name_servers
+							if(resp[i].substring(0,26) == "static domain_name_servers") {
+								domainIndex = i;
 							}
 						}
 
@@ -230,6 +235,7 @@
 				var gateway = (document.getElementById('gateway_form')).value;
 				resp[ipIndex] = 'static ip_address='+ip+'/'+netmask;
 				resp[routersIndex] = 'static routers='+gateway;
+				resp[domainIndex] = 'static domain_name_servers='+gateway;
 				// console.log(resp);
 
 				$.ajax({
