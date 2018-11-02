@@ -14,6 +14,7 @@ import Adafruit_DHT as dht
 import Adafruit_MCP3008
 import I2C_LCD_driver
 import averagedata
+import RPi.GPIO as GPIO
 
 # Software SPI configuration for MCP3008:
 CLK  = 11
@@ -146,9 +147,10 @@ def main():
 				tread = time()
 
 			#get voltage analog value then convert to actual voltage
+			voltage_volt[0] = (mcp_analog[0] / 1023) * 13.8
+			voltage_volt[1] = (mcp_analog[1] / 1023) * 30.02
 			for i in range(4):
-				voltage_volt[i] = (mcp_analog[i] / 1023) * 13.9
-				voltage_volt[i] = round(voltage_volt[i] , 2)
+				voltage_volt[i] = round(voltage_volt[i] , 1)
 
 			#get DHT22 temperature
 			tempData.updateData(temp_read)
@@ -161,16 +163,12 @@ def main():
 
 			if t2 - tnow >= 5:
 				print('\nAverage Temperature: ' + str(temp))
-				for i in range(4):
-<<<<<<< HEAD
-	            			print('Average Voltage ' + str(i) + ' : ' + str(voltage_volt[i]))
+            			print('Average Voltage 1 : ' + str(voltage_volt[0]))
+			 	print('Average Voltage 2 : ' + str(voltage_volt[1]))
 	            		lcd.lcd_display_string("Temp: " + str(round(temp, 2)), 1)
 	            		lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
-=======
-	            	print('Average Voltage ' + str(i) + ' : ' + str(voltage_volt[i]))
-	            lcd.lcd_display_string("Temp: " + str(temp) + degree + "C", 1)
-	            lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
->>>>>>> 0d75a0a8923b126e708d84d088d5060ec946bb06
+		            	lcd.lcd_display_string("Temp: " + str(temp) + degree + "C", 1)
+	        		lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
 				sensor_now(filename_sensor, temp, curr, voltage_volt[0])
 				tnow = time()
 
@@ -179,6 +177,6 @@ def main():
 	#if keyboard interrupt pressed
 	except KeyboardInterrupt:
 		print("Program Stopped")
-
+		GPIO.cleanup()
 if __name__ == "__main__":
 	main()
