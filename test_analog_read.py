@@ -146,7 +146,7 @@ def main():
 			filename_log = dirpath + '/log/' + filename_date + '.csv'
 
 			#read all analog pin from mcp3008 with interval of 1 second
-			if t3 - tread >= 1:
+			if t3 - tread >= 0.5:
 				for i in range(8):
 					values[i] = mcp.read_adc(i)
 					analogData_ch[i].updateData(values[i])
@@ -177,23 +177,14 @@ def main():
 				write_sensor(filename_log, sensorData)
 				tlog = time()
 
-			if t2 - tnow >= 10:
+			if t2 - tnow >= 5:
 				print('\nAverage Temperature: ' + str(temp))
-<<<<<<< HEAD
-        			print('Average Voltage 1 : ' + str(battery_1))
-			 	print('Average Voltage 2 : ' + str(battery_2))
-			 	print('Average Voltage 3 : ' + str(battery_3))
-			 	print('Average Voltage 4 : ' + str(battery_4))
-			      	lcd.lcd_display_string("Temp: " + str(temp) + degree + "C", 1)
-		    		lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
-=======
-        print('Battery 1 : ' + str(battery_1) + 'V')
+			        print('Battery 1 : ' + str(battery_1) + 'V')
 			 	print('Battery 2 : ' + str(battery_2) + 'V')
 			 	print('Battery 3 : ' + str(battery_3) + 'V')
 			 	print('Battery 4 : ' + str(battery_4) + 'V')
-      	lcd.lcd_display_string("Temp: " + str(temp) + degree + "C", 1)
-    		lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
->>>>>>> ae9bb61a89ef6ff567addb1bbffc7821ca156652
+  			    	lcd.lcd_display_string("Temp: " + str(temp) + degree + "C", 1)
+   		 		lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
 				sensor_now(filename_sensor, temp, curr, voltage_volt[0])
 				battery_now(filename_battery, battery_1, battery_2, battery_3, battery_4)
 				tnow = time()
