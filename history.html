@@ -47,7 +47,7 @@
 	    </script>
 
 		<div class="container" align="center">
-			<select id="selMonth" onchange="readAll(this.options[this.selectedIndex].value)"></select>
+			<select class="form-control" id="selMonth" style="width: 150px;" onchange="readAll(this.options[this.selectedIndex].value)"></select>
 			<canvas id="histChart" width="500" height="200" border="0"></canvas>
 			<div align="center">
 	    		<button class="btn btn-default" id="1d">1 Hari</button>
@@ -56,19 +56,31 @@
 	    		<button class="btn btn-default" id="30d">1 Bulan</button>
 	    	</div>
 	    	<br>
-	    	
-		  	<div>
-		  		<h4 align="center">Download Log Files</h4>
-		  		<table class="table">
-		  			<thead>
-		  				<th>File Name</th>
-		  				<th>Action</th>
-		  			</thead>
-		  			<tbody id="logTable">
-		  			</tbody>
-		  		</table>
-		  	</div>
+	    	<button class="btn btn-default" id="downloadCSV">Download Log Files</button>
 		</div>
+
+		<div id="downloadModal" class="modal fade" role="dialog">
+		    <div class="modal-dialog">
+		      <!-- Modal content-->
+		      <div class="modal-content">
+		    	<div class="modal-header">
+		        	<button type="button" class="close" data-dismiss="modal">&times;</button>
+		        	<h4 class="modal-title">Pilih CSV</h4>
+	        	</div>
+	    		<div class="modal-body">
+	    			Pilih bulan dan tahun data :
+	    			<select class="form-control" id="sYear" onchange="yearChanged(this.options[this.selectedIndex].value)">
+	    				<!-- <option value="">Select year</option> -->
+	    			</select>
+	    			<select class="form-control" id="sMonth">
+	    				<!-- <option value="">Select month</option> -->
+	    			</select>
+	    		</div>
+	    		<div class="modal-footer">
+		        	<button type="button" class="btn btn-default" id="goToCsv">Download</button>
+		        </div>
+	    	</div>
+	    </div>
 
 		<script>
 			addSelection();
@@ -85,41 +97,34 @@
 			}, 300000);
 
 			var histChart;
-			readLogDir();
 
 			function addSelection() {
 				document.getElementById("selMonth").innerHTML = "";
-				$.ajax({
-					type: "GET",  
-					url: "phpscript/readLogDir.php",
-					dataType: "text",
-					success: function(response)  
-					{
-						var obj = JSON.parse(response)
-						var selMonth = document.getElementById('selMonth');
-						for (var i = 0; i < Object.keys(obj).length; i++) {
-						    var opt = "<option";
-						    if(obj[i] != "sensor-now.txt") {
-						    	// last file -> selected
-						    	if (i == Object.keys(obj).length-2) {
-						    		opt += 
-							    	" value='log/" + obj[i] + "' selected='selected'>Bulan " + obj[i].substring(5,7) + " Tahun " + obj[i].substring(0,4) + "</option>";
-						    		// console.log(opt);
-									selMonth.innerHTML += opt;
-						    	} else {
-							    	opt += 
-							    	" value='log/" + obj[i] + "'>Bulan " + obj[i].substring(5,7) + " Tahun " + obj[i].substring(0,4) + "</option>";
-						    		// console.log(opt);
-									selMonth.innerHTML += opt;
-								}
-						    }
+				var year = (moment().year()).toString();
+				var month = (moment().month()+1).toString();
+				var obj = readLogDir();
+				var selMonth = document.getElementById('selMonth');
+				for (var i = 0; i < Object.keys(obj).length; i++) {
+				    var opt = "<option";
+				    if(obj[i] != "sensor-now.txt") {
+				    	// file with current year and month in its name -> selected
+				    	var formattedMonth = moment(obj[i].substring(5,7), 'MM').format('MMMM');
+				    	if (obj[i].substring(0,4) == year && obj[i].substring(5,7) == month) {
+				    		opt += 
+					    	" value='log/" + obj[i] + "' selected='selected'>" + formattedMonth + " " + obj[i].substring(0,4) + "</option>";
+				    		// console.log(opt);
+							selMonth.innerHTML += opt;
+				    	} else {
+					    	opt += 
+					    	" value='log/" + obj[i] + "'>" + formattedMonth + " " + obj[i].substring(0,4) + "</option>";
+				    		// console.log(opt);
+							selMonth.innerHTML += opt;
 						}
-					}   
-				});
+				    }
+				}
 			}
 
 			function readAll(urlLog) {
-				console.log(urlLog);
 				var logData;
 				$.ajax({
 				  type: "GET",  
@@ -130,7 +135,6 @@
 				  {
 					logData = $.csv.toObjects(response);
 					generateChartData(logData);
-					// firstDraw();
 				  }   
 				});
 			}
@@ -222,7 +226,6 @@
 			    		}
 		    		]
 			    };
-			    console.log(data30[0]);
 			    if (histChart) histChart.chart.destroy();
 				var ctx = document.getElementById("histChart").getContext('2d');
 				window.histChart = new Chart(ctx, {
@@ -232,26 +235,91 @@
 			}
 			
 			function readLogDir() {
+				var obj;
 				$.ajax({
 					type: "GET",  
 					url: "phpscript/readLogDir.php",
 					dataType: "text",
+					async: false,
 					success: function(response)  
 					{
-						var obj = JSON.parse(response)
-						var tbody = document.getElementById('logTable');
-						for (var i = 0; i < Object.keys(obj).length; i++) {
-						    var tr = "<tr>";
-						    if(obj[i] != "sensor-now.txt") {
-						    	tr += 
-						    	"<td>" + obj[i] + "</td>" + "<td><form method='get' action='log/" + obj[i] + "'><button class='btn btn-default' type='submit'>Download</button></form></td></tr>";
-						    		// console.log(tr);
-    							tbody.innerHTML += tr;
-						    }
-						}
+						obj = JSON.parse(response)
 					}   
 				});
+				return obj;
 			}
+
+			// show modal on button click
+			$("#downloadCSV").click(function() {
+				// load elements for modal -> select year
+				document.getElementById("sYear").innerHTML = ""; // emptying select box
+				var obj = readLogDir();
+				var sYear = document.getElementById('sYear');
+				var cYear;
+				var option1 = "<option value='none'>Select year</option>";
+				sYear.innerHTML += option1; // append first option
+				for (var i = 0; i < Object.keys(obj).length; i++) {
+					var opt = "<option"; // untuk selection tahun
+					if(obj[i] != "sensor-now.txt" && i == 0) {
+						// tahun awal dapet
+						cYear = obj[i].substring(0,4);
+						// set innerhtml
+						opt += 
+						" value='log/" + obj[i].substring(0,4) + "-'>" + obj[i].substring(0,4) + "</option>";
+					} else if (obj[i] != "sensor-now.txt" && obj[i].substring(0,4) != cYear) { // cek tahun ketemu pertama kali
+						// set innerhtml
+						opt += 
+						" value='log/" + obj[i].substring(0,4) + "-'>" + obj[i].substring(0,4) + "</option>";
+					}
+					sYear.innerHTML += opt;
+				}
+				yearChanged("none");
+				$("#downloadModal").modal('show');
+			});
+
+			function yearChanged(val) {
+				document.getElementById('sMonth').innerHTML = "";
+				if (val == "none") {
+					var sMonth = document.getElementById('sMonth');
+					var option1 = "<option value='none'>Select month (please select the year)</option>";
+					sMonth.innerHTML += option1; // append the only option
+
+					var str = "<button id='goToCsv' class='btn btn-default' disabled>Download</button>";
+					$("#goToCsv").replaceWith(str);
+				} else {
+					// append option to select month
+					document.getElementById('sMonth').innerHTML = ""; // emptying options
+					// read log directory
+					var obj = readLogDir();
+					var sMonth = document.getElementById('sMonth');
+					for (var i = 0; i < Object.keys(obj).length; i++) {
+						if (obj[i].substring(0,4) == val.substring(4,8)) { // got file with years selected
+							var opt = "<option"; // untuk selection bulan
+							var formattedMonth = moment(parseInt(obj[i].substring(5,7)), 'MM').format('MMMM');
+							// set innerhtml string
+							if (i == 0) {
+								opt += 
+								" value='" + obj[i].substring(5,7) + "' selected='selected'>" + formattedMonth + "</option>";
+							} else {
+								opt += 
+								" value='" + obj[i].substring(5,7) + "'>" + formattedMonth + "</option>";
+							}
+							sMonth.innerHTML += opt;
+						}
+					}
+					var a = document.getElementById('sYear').value;
+					var b = document.getElementById('sMonth').value;
+					var str = "<form method='get' action='" + a + b + ".csv' id='goToCsv'><button class='btn btn-default' type='submit'>Download</button></form>";
+					$("#goToCsv").replaceWith(str);
+				}
+			}
+
+			$("#sMonth").on('change', function() {
+				var a = document.getElementById('sYear').value;
+				var b = document.getElementById('sMonth').value;
+				var str = "<form method='get' action='" + a + b + ".csv' id='goToCsv'><button class='btn btn-default' type='submit'>Download</button></form>";
+				$("#goToCsv").replaceWith(str);
+			});
 
 			$("#1d").click(function() {
 			    var data = histChart.config.data;
