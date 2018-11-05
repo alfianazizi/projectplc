@@ -1,49 +1,52 @@
 #!/usr/bin/python
 
+# Pin Allocation:
+# Relay 1 : GPIO18
+# Relay 2 : GPIO27
+# DHT : GPIO22
+
+
 from gpiozero import MCP3008
-import Adafruit_DHT as dht
 from time import sleep, strftime, time
 from csv import writer
 import os
 import random
+import Adafruit_DHT as dht
+import Adafruit_MCP3008
+import I2C_LCD_driver
+import averagedata
 
-#Define DHT Type
-DHT_TYPE = dht.DHT22
+# Software SPI configuration for MCP3008:
+CLK  = 11
+MISO = 9
+MOSI = 10
+CS   = 8
+mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
-#Define DHT PIN
-DHT_PIN = 23 
+#define LCD I2C
 
-#Define sensor channel in MCP3008
-current_pin = 0
-voltage_pin = 1
-
-#Read value of ADC reading
-current_channel= MCP3008(current_pin)
-voltage_channel = MCP3008(voltage_pin)
+lcd = I2C_LCD_driver.lcd()
 
 #Define header for csv log files
 header_temp = ['time', 'temperature', 'arus', 'battery']
 
 #Specify direcroty path of sensor log
 dirpath = os.path.dirname(os.path.realpath(__file__))
-filename_date = strftime("%Y-%m")
-filename_log = dirpath + '/log/' + filename_date + '.csv'
 filename_sensor = dirpath + '/log/sensor-now.txt'
 
-#Define interval sensor update
-updateSensor = 300 #second interval update
-tt = time() #temp initial timer
-tn = time()
+#Define array of analog read value
+global values
+values = [0]*8
 
-print("Logging Temperature")
+#Define DHT Type
+DHT_number = dht.DHT22
 
+#Define DHT PIN
+DHT_input_pin = 22
 
-def get_temperature(dhttype, pin):
+def get_temperature(dhttype, dhtpin):
 	humi, temp = dht.read_retry(dhttype, dhtpin)
 	return temp
-
-def get_current():
-	
 
 def get_sensor_data(temperature, current, voltage):
 	sensor_data = []
@@ -68,19 +71,70 @@ def sensor_now(filename, temp, current, voltage):
 		now.write(str(current) + '\n')
 		now.write(str(voltage) + '\n')
 
+
+
+print("Logging Temperature")
 def main():
+
+	#Define interval sensor update
+	updateSensor = 300 #second interval update
+
+	#initiate array of sensor data
+	mcp_analog = [0]*8
+	voltage_volt = [0]*4
+	analogData_ch = [0]*8
+	temp_read = 0
+
+	#define timer 
+	tlog = time() #temp initial timer
+	tnow = time()
+	tread = time()
+
+	#initiate analog data reading for MCP3008 and DHT22 average value
+	for i in range (8):
+		analogData_ch[i] = averagedata.averageData(10, 10, 'Analog Values Channel ' + str(i))
+	tempData = averagedata.averageData(10, 10, 'Temperature Values')
+
+
 	try:
+		#begin loop
 		while True:
-			sensorData = get_sensor_data(temp, curr, volt)
 			t1 = time()
 			t2 = time()
-			if t1 - tt >= updateSensor:
-				write_sensor(filename_log, sensorData)
-				tt = time()
+			t3 = time()
+			curr = random.randint(10,80)
+			filename_date = strftime("%Y-%m")
+			filename_log = dirpath + '/log/' + filename_date + '.csv'
 
-			if t2 - tn >= 5:
-				sensor_now(filename_sensor, cpu.temperature, curr, volt)
-				tn = time()
+			#read all analog pin from mcp3008 with interval of 1 second
+			if t3 - tread >= 1:
+				for i in range(8):
+					values[i] = mcp.read_adc(i)
+					analogData_ch[i].updateData(values[i])
+					mcp_analog[i] = analogData_ch[i].runningAverage()
+				temp_read = get_temperature(DHT_number, DHT_input_pin)
+				tread = time()
+
+			#get voltage analog value then convert to actual voltage
+			for i in range(4):
+				voltage_volt[i] = (mcp_analog[i] / 1023) * 16.5
+
+			#get DHT22 temperature
+			tempData.updateData(temp_read)
+			temp = tempData.runningAverage()
+			sensorData = get_sensor_data(temp, curr, voltage_volt[0])
+			if t1 - tlog >= updateSensor:
+				write_sensor(filename_log, sensorData)
+				tlog = time()
+
+			if t2 - tnow >= 5:
+				print('\nAverage Temperature: ' + str(temp))
+				for i in range(4):
+	            	print('Average Voltage ' + str(i) + ' : ' + str(voltage_volt[i]))
+	            lcd.lcd_display_string("Temp: " + str(round(temp, 2)), 1)
+	            lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
+				sensor_now(filename_sensor, temp, curr, voltage_volt[0])
+				tnow = time()
 
 
 
