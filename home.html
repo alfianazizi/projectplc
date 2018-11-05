@@ -52,7 +52,7 @@
 			<div class="col-sm-3">
 				<div class="panel panel-default">
 					<div class="panel-heading" align="center" >Current Temperature</div>
-					<div class="panel-body"  id="temp">
+					<div class="panel-body">
 						<h1 align="center" id="currentTemp"></h1>
 					</div>
 				</div>
@@ -60,7 +60,7 @@
 			<div class="col-sm-3">
 				<div class="panel panel-default">
 					<div class="panel-heading" align="center">Current Voltage</div>
-					<div class="panel-body" id="vol">
+					<div class="panel-body">
 						<h1 align="center" id="currentArus"></h1>
 					</div>
 				</div>
@@ -68,7 +68,7 @@
 			<div class="col-sm-3">
 				<div class="panel panel-default">
 					<div class="panel-heading" align="center">Current Battery Capacity</div>
-					<div class="panel-body"  id="cap">
+					<div class="panel-body">
 						<h1 align="center" id="currentBat"></h1>
 					</div>
 				</div>
@@ -78,6 +78,41 @@
 					<div class="panel-heading" align="center">Battery Remaining</div>
 					<div class="panel-body">
 						<h1 align="center">10 hours</h1>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-3">
+				<div class="panel panel-default">
+					<div class="panel-heading" align="center">1st Battery Life</div>
+					<div class="panel-body">
+						<h1 align="center" id="lifeB1"></h1>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-3">
+				<div class="panel panel-default">
+					<div class="panel-heading" align="center">2nd Battery Life</div>
+					<div class="panel-body">
+						<h1 align="center" id="lifeB2"></h1>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-3">
+				<div class="panel panel-default">
+					<div class="panel-heading" align="center">3rd Battery Life</div>
+					<div class="panel-body">
+						<h1 align="center" id="lifeB3"></h1>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-3">
+				<div class="panel panel-default">
+					<div class="panel-heading" align="center">4th Battery Life</div>
+					<div class="panel-body">
+						<h1 align="center" id="lifeB4"></h1>
 					</div>
 				</div>
 			</div>
@@ -97,6 +132,7 @@
 
 	<script type="text/javascript">
 		readCurrent();
+		readBattery();
 		
 		var fileDir;
 		readDate();
@@ -106,6 +142,7 @@
 		var batData = [];
 		readAll();
 		setInterval(readCurrent, 5000);
+		setInterval(readBattery, 5000);
 		var tempChartData = generateChartData(tempData);
 		var arusChartData = generateChartData(arusData);
 		var batChartData = generateChartData(batData);
@@ -161,11 +198,36 @@
 			var textWidget = document.getElementById("currentTemp");
 			textWidget.textContent = (Math.round(parseFloat(currData[0]) * 100) / 100)+'\u00B0'+'C';
 
-			var textWidget = document.getElementById("currentArus");
+			textWidget = document.getElementById("currentArus");
 			textWidget.textContent = (Math.round(parseFloat(currData[1]) * 100) / 100)+' A';
 			
-			var textWidget = document.getElementById("currentBat");
+			textWidget = document.getElementById("currentBat");
 			textWidget.textContent = (Math.round(parseFloat(currData[2]) * 100) / 100)+' %';
+		}
+
+		function readBattery() {
+			var currData = [];
+			$.ajax({
+			  type: "GET",  
+			  url: "log/battery-now.txt",
+			  dataType: "text",
+			  async: false,
+			  success: function(response)  
+			  {
+				currData = response.split(/[\n\r]+/);
+			  }   
+			});
+			var textWidget = document.getElementById("lifeB1");
+			textWidget.textContent = currData[0]+' V';
+
+			textWidget = document.getElementById("lifeB2");
+			textWidget.textContent = currData[1]+' V';
+			
+			textWidget = document.getElementById("lifeB3");
+			textWidget.textContent = currData[2]+' V';
+			
+			textWidget = document.getElementById("lifeB4");
+			textWidget.textContent = currData[3]+' V';
 		}
 
 		// read csv file untuk temperatur
