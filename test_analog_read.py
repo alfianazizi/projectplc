@@ -155,23 +155,28 @@ def main():
 			for i in range(4):
 				voltage_volt[i] = round(voltage_volt[i] , 1)
 
+
+			battery_1 = voltage_volt[0]
+			battery_2 = voltage_volt[1] - voltage_volt[0]
+			battery_3 = voltage_volt[2] - voltage_volt[1]
+			battery_4 = voltage_volt[3] - voltage_volt[2]
 			#get DHT22 temperature
 			tempData.updateData(temp_read)
 			temp = tempData.runningAverage()
 			temp = round(temp,2)
-			sensorData = get_sensor_data(temp, curr, voltage_volt[0])
+			sensorData = get_sensor_data(temp, curr, battery_1)
 			if t1 - tlog >= updateSensor:
 				write_sensor(filename_log, sensorData)
 				tlog = time()
 
 			if t2 - tnow >= 5:
 				print('\nAverage Temperature: ' + str(temp))
-			        print('Average Voltage 1 : ' + str(voltage_volt[0]))
-			 	print('Average Voltage 2 : ' + str(voltage_volt[1]))
-			 	print('Average Voltage 3 : ' + str(voltage_volt[2]))
-			 	print('Average Voltage 4 : ' + str(voltage_volt[3]))
-      				lcd.lcd_display_string("Temp: " + str(temp) + degree + "C", 1)
-		    		lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
+        print('Average Voltage 1 : ' + str(battery_1))
+			 	print('Average Voltage 2 : ' + str(battery_2))
+			 	print('Average Voltage 3 : ' + str(battery_3))
+			 	print('Average Voltage 4 : ' + str(battery_4))
+      	lcd.lcd_display_string("Temp: " + str(temp) + degree + "C", 1)
+    		lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
 				sensor_now(filename_sensor, temp, curr, voltage_volt[0])
 				tnow = time()
 
