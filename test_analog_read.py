@@ -116,7 +116,7 @@ def main():
 	analogData_ch = [0]*8
 	temp_read = 0
 
-	#define timer 
+	#define timer
 	tlog = time() #temp initial timer
 	tnow = time()
 	tread = time()
@@ -149,6 +149,9 @@ def main():
 			#get voltage analog value then convert to actual voltage
 			voltage_volt[0] = (mcp_analog[0] / 1023) * 13.8
 			voltage_volt[1] = (mcp_analog[1] / 1023) * 30.02
+			voltage_volt[2] = (mcp_analog[2] / 1023) * 37.29
+			voltage_volt[3] = (mcp_analog[3] / 1023) * 57.06
+
 			for i in range(4):
 				voltage_volt[i] = round(voltage_volt[i] , 1)
 
@@ -163,12 +166,14 @@ def main():
 
 			if t2 - tnow >= 5:
 				print('\nAverage Temperature: ' + str(temp))
-            			print('Average Voltage 1 : ' + str(voltage_volt[0]))
+        print('Average Voltage 1 : ' + str(voltage_volt[0]))
 			 	print('Average Voltage 2 : ' + str(voltage_volt[1]))
-	            		lcd.lcd_display_string("Temp: " + str(round(temp, 2)), 1)
-	            		lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
-		            	lcd.lcd_display_string("Temp: " + str(temp) + degree + "C", 1)
-	        		lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
+			 	print('Average Voltage 3 : ' + str(voltage_volt[2]))
+			 	print('Average Voltage 4 : ' + str(voltage_volt[3]))
+    		lcd.lcd_display_string("Temp: " + str(round(temp, 2)), 1)
+    		lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
+      	lcd.lcd_display_string("Temp: " + str(temp) + degree + "C", 1)
+    		lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
 				sensor_now(filename_sensor, temp, curr, voltage_volt[0])
 				tnow = time()
 
