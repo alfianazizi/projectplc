@@ -5,7 +5,6 @@
 # Relay 2 : GPIO27
 # DHT : GPIO22
 
-
 from gpiozero import MCP3008
 from time import sleep, strftime, time
 from csv import writer
@@ -44,6 +43,10 @@ DHT_number = dht.DHT22
 #Define DHT PIN
 DHT_input_pin = 22
 
+#degree symbol
+global degree
+degree = unichr(176)
+
 def get_temperature(dhttype, dhtpin):
 	humi, temp = dht.read_retry(dhttype, dhtpin)
 	return temp
@@ -71,6 +74,33 @@ def sensor_now(filename, temp, current, voltage):
 		now.write(str(current) + '\n')
 		now.write(str(voltage) + '\n')
 
+#module to write default IP Address in Raspberry Pi
+def set_default(filename):
+	default_data = """hostname
+	clientid
+	persistent
+	option rapid_commit
+	option domain_name_servers, domain_name, domain_search, host_name
+	option classless_static_routes
+	option ntp_servers
+	option interface_mtu
+	require dhcp_server_identifier
+	slaac private
+	interface eth0
+	static ip_address=10.8.41.181/24
+	static routers=10.8.41.1
+	static domain_name_servers=10.8.41.1 8.8.8.8"""
+	f = open(filename, "w")
+	f.write(default_data)
+	f.close
+
+#module to restart the Pi
+def restart():
+    command = "/usr/bin/sudo /sbin/shutdown -r now"
+    import subprocess
+    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    output = process.communicate()[0]
+    print output
 
 
 print("Logging Temperature")
@@ -117,11 +147,13 @@ def main():
 
 			#get voltage analog value then convert to actual voltage
 			for i in range(4):
-				voltage_volt[i] = (mcp_analog[i] / 1023) * 16.5
+				voltage_volt[i] = (mcp_analog[i] / 1023) * 13.9
+				voltage_volt[i] = round(voltage_volt[i] , 2)
 
 			#get DHT22 temperature
 			tempData.updateData(temp_read)
 			temp = tempData.runningAverage()
+			temp = round(temp,2)
 			sensorData = get_sensor_data(temp, curr, voltage_volt[0])
 			if t1 - tlog >= updateSensor:
 				write_sensor(filename_log, sensorData)
@@ -131,7 +163,7 @@ def main():
 				print('\nAverage Temperature: ' + str(temp))
 				for i in range(4):
 	            	print('Average Voltage ' + str(i) + ' : ' + str(voltage_volt[i]))
-	            lcd.lcd_display_string("Temp: " + str(round(temp, 2)), 1)
+	            lcd.lcd_display_string("Temp: " + str(temp) + degree + "C", 1)
 	            lcd.lcd_display_string("Voltage: " + str(voltage_volt[0]) + "V", 2)
 				sensor_now(filename_sensor, temp, curr, voltage_volt[0])
 				tnow = time()
