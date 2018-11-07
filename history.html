@@ -260,13 +260,13 @@
 				sYear.innerHTML += option1; // append first option
 				for (var i = 0; i < Object.keys(obj).length; i++) {
 					var opt = "<option"; // untuk selection tahun
-					if(obj[i] != "sensor-now.txt" && i == 0) {
+					if(obj[i] != "sensor-now.txt" && obj[i] != "battery-now.txt" && i == 0) {
 						// tahun awal dapet
 						cYear = obj[i].substring(0,4);
 						// set innerhtml
 						opt += 
 						" value='log/" + obj[i].substring(0,4) + "-'>" + obj[i].substring(0,4) + "</option>";
-					} else if (obj[i] != "sensor-now.txt" && obj[i].substring(0,4) != cYear) { // cek tahun ketemu pertama kali
+					} else if (obj[i] != "sensor-now.txt" && obj[i] != "battery-now.txt" && obj[i].substring(0,4) != cYear) { // cek tahun ketemu pertama kali
 						// set innerhtml
 						opt += 
 						" value='log/" + obj[i].substring(0,4) + "-'>" + obj[i].substring(0,4) + "</option>";
