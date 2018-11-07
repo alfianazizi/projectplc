@@ -28,8 +28,8 @@ reset_pin = 24
 charging_pin = 23
 
 #Relay pin
-RELAY1_PIN = 18
-RELAY2_PIN = 27
+RELAY1_PIN = 27
+RELAY2_PIN = 18
 
 #define relay object
 relay_output = OutputDevice(RELAY1_PIN, active_high=False, initial_value=True)
@@ -240,9 +240,9 @@ def main():
 				battery_percentage = 0.0
 
 			if battery_percentage > 90.0:
-				relay_input.off()
-			elif battery_percentage > 30.0 and battery_percentage < 90.0:
 				relay_input.on()
+			elif battery_percentage > 30.0 and battery_percentage < 90.0:
+				relay_input.off()
 			elif battery_percentage < 30.0:
 				relay_output.off()
 
