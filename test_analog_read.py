@@ -152,7 +152,7 @@ def main():
 			filename_log = dirpath + '/log/' + filename_date + '.csv'
 
 			#read all analog pin from mcp3008 with interval of 1 second
-			if t1 - tread >= 0.033:
+			if t1 - tread >= 0.067:
 				for i in range(8):
 					values[i] = mcp.read_adc(i)
 					analogData_ch[i].updateData(values[i])
@@ -225,7 +225,7 @@ def main():
 				write_sensor(filename_log, sensorData)
 				tlog = time()
 
-			if t1 - tnow >= 5:
+			if t1 - tnow >= 10:
 				print('\nAverage Temperature: ' + str(temp))
 				print('Battery 1 : ' + str(battery_1) + 'V')
 			 	print('Battery 2 : ' + str(battery_2) + 'V')
