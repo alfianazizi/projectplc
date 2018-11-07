@@ -243,11 +243,12 @@ def main():
 				charging_reference = 9.5
 				state_charge = 'Discharging'
 			else:
-				charging_reference = 12.9
-				if battery_percentage > 90.0:
+				if battery_percentage > 95.0:
+					charging_reference = 9.5
 					relay_input.on()
 					state_charge = 'Discharging'
-				elif battery_percentage > 30.0 and battery_percentage < 90.0:
+				elif battery_percentage => 30.0 and battery_percentage <= 85.0:
+					charging_reference = 12.9
 					relay_input.off()
 					state_charge = 'Charging'
 
