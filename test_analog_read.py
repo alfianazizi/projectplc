@@ -207,7 +207,7 @@ def main():
 
 			#get current value from 3 sensor ACS712
 			for i in range(4, 7):
-				current_amp[i] = round(((1.5 - (mcp_analog[i] * (3 / 1024.0))) / 0.066), 2)
+				current_amp[i] = round(((1.493 - (mcp_analog[i] * (3 / 930.0))) / 0.066), 2)
 
 			#power consumed by load, calculate with current * voltage output.
 			#Output 1: current reading 1 * 12V
