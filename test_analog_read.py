@@ -32,7 +32,7 @@ RELAY1_PIN = 18
 RELAY2_PIN = 27
 
 #define relay object
-relay_output = OutputDevice(RELAY1_PIN, active_high=False, initial_value=False)
+relay_output = OutputDevice(RELAY1_PIN, active_high=False, initial_value=True)
 relay_input = OutputDevice(RELAY2_PIN)
 
 #define LCD I2C
@@ -181,7 +181,7 @@ def main():
 			#if charging is on then the voltage reference is bigger
 			#get voltage analog value then convert to actual voltage
 
-			if charging_state.value == True:
+			if charging_state.is_pressed:
 				charging_reference = 14
 				state_charge = 'Charging'
 			else:
@@ -214,6 +214,10 @@ def main():
 			current_amp[5] = round(((1.5 - (mcp_analog[5] * (3 / 916.0))) / 0.066), 2)
 			current_amp[6] = round(((1.5 - (mcp_analog[6] * (3 / 922.0))) / 0.066), 2)
 
+			for i in range (4,7):
+				if current_amp[i] < 0.00:
+					current_amp[i] = 0.00
+
 			#power consumed by load, calculate with current * voltage output.
 			#Output 1: current reading 1 * 12V
 			#Output 2: current reading 1 * 24V
@@ -230,10 +234,17 @@ def main():
 				tbat = time()
 
 			battery_percentage = batteryPercent.runningAverage()
-			if battery_percentage > 100:
-				battery_percentage = 100
-			elif battery_percentage < 0:
-				battery_percentage = 0
+			if battery_percentage > 100.0:
+				battery_percentage = 100.0
+			elif battery_percentage < 0.0:
+				battery_percentage = 0.0
+
+			if battery_percentage > 90.0:
+				relay_input.off()
+			elif battery_percentage > 30.0 and battery_percentage < 90.0:
+				relay_input.on()
+			elif battery_percentage < 30.0:
+				relay_output.off()
 
 			sensorData = get_sensor_data(temp, total_power_usage, battery_percentage)
 			#check if factory reset button is pressed more than 5 second
