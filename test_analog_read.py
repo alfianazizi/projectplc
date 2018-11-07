@@ -152,7 +152,7 @@ def main():
 			filename_log = dirpath + '/log/' + filename_date + '.csv'
 
 			#read all analog pin from mcp3008 with interval of 1 second
-			if t1 - tread >= 0.003:
+			if t1 - tread >= 0.075:
 				for i in range(8):
 					values[i] = mcp.read_adc(i)
 					analogData_ch[i].updateData(values[i])
@@ -180,10 +180,10 @@ def main():
 			#else:
 			charging_reference = 50
 
-			voltage_reference1 = 13.745
-			voltage_reference2 = 70.6
-			voltage_reference3 = 59.02
-			voltage_reference4 = 56.7
+			voltage_reference1 = 13.7
+			voltage_reference2 = 70
+			voltage_reference3 = 59
+			voltage_reference4 = 56.6
 
 			voltage_volt[0] = (mcp_analog[0] / 1023) * voltage_reference1
 			voltage_volt[1] = (mcp_analog[1] / 1023) * voltage_reference2
