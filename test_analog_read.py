@@ -27,9 +27,13 @@ mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 reset_pin = 24
 charging_pin = 23
 
-#define relay
-relay_output = OutputDevice(18)
-relay_input = OutputDevice(27)
+#Relay pin
+RELAY1_PIN = 18
+RELAY2_PIN = 27
+
+#define relay object
+relay_output = OutputDevice(RELAY1_PIN, active_high=False, initial_value=False)
+relay_input = OutputDevice(RELAY2_PIN)
 
 #define LCD I2C
 lcd = I2C_LCD_driver.lcd()
