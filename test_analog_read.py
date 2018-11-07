@@ -239,18 +239,18 @@ def main():
 			elif battery_percentage < 0.0:
 				battery_percentage = 0.0
 
-			if charging_state.is_pressed:
+			# if charging_state.is_pressed:
+			# 	charging_reference = 9.5
+			# 	state_charge = 'Discharging'
+			# else:
+			if battery_percentage > 95.0:
 				charging_reference = 9.5
+				relay_input.on()
 				state_charge = 'Discharging'
-			else:
-				if battery_percentage > 95.0:
-					charging_reference = 9.5
-					relay_input.on()
-					state_charge = 'Discharging'
-				elif battery_percentage <= 94.0:
-					charging_reference = 12.9
-					relay_input.off()
-					state_charge = 'Charging'
+			elif battery_percentage <= 94.0:
+				charging_reference = 12.9
+				relay_input.off()
+				state_charge = 'Charging'
 
 			if battery_percentage < 30.0:
 				relay_output.on()
@@ -294,6 +294,7 @@ def main():
 		print("Program Stopped")
 		#GPIO.cleanup()
 		relay_input.off()
+		relay_output.off()
 		sys.exit(0)
 if __name__ == "__main__":
 	print("Logging Temperature")
