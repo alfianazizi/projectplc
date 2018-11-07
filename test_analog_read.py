@@ -5,7 +5,7 @@
 # Relay 2 : GPIO27
 # DHT : GPIO22
 
-from gpiozero import MCP3008, Button
+from gpiozero import MCP3008, Button, OutputDevice
 from time import sleep, strftime, time
 from csv import writer
 from subprocess import check_call
@@ -24,9 +24,12 @@ CS   = 8
 mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
 #define GPIO Pin for resetting all settings and senssing the charger
-#reset_pin = 22
-#charging_pin = 23
-#output_pin = 24
+reset_pin = 24
+charging_pin = 23
+
+#define relay
+relay_output = OutputDevice(18)
+relay_input = OutputDevice(27)
 
 #define LCD I2C
 lcd = I2C_LCD_driver.lcd()
@@ -49,10 +52,6 @@ DHT_number = dht.DHT22
 #Define DHT PIN
 DHT_input_pin = 22
 
-#degree symbol
-global degree
-degree = unichr(176)
-
 def get_temperature(dhttype, dhtpin):
 	humi, temp = dht.read_retry(dhttype, dhtpin)
 	return temp
@@ -74,11 +73,12 @@ def write_sensor(filename, data):
 			temp_writer.writerow(header_temp)
 		temp_writer.writerow(data)
 
-def sensor_now(filename, temp, current, voltage):
+def sensor_now(filename, temp, current, voltage, state):
 	with open(filename, 'w') as now:
 		now.write(str(temp) + '\n')
 		now.write(str(current) + '\n')
 		now.write(str(voltage) + '\n')
+		now.write(state)
 
 def battery_now(filename, battery1, battery2, battery3, battery4):
 	with open(filename, 'w') as now:
@@ -120,10 +120,10 @@ def main():
 	updateSensor = 300 #second interval update
 
 	#define factory reset button
-#	factory_reset_button = Button(reset_pin, hold_time=5)
+	factory_reset_button = Button(reset_pin, hold_time=5)
 
 	#define charger sensing logic
-#	charging_state = Button(charging_pin)
+	charging_state = Button(charging_pin)
 
 	#initiate array of sensor data
 	mcp_analog = [0]*8
@@ -137,11 +137,13 @@ def main():
 	tnow = time()
 	tread = time()
 	ttemp = time()
+	tbat = time()
 
 	#initiate analog data reading for MCP3008 and DHT22 average value
 	for i in range (8):
 		analogData_ch[i] = averagedata.averageData(150, 150, 'Analog Values Channel ' + str(i))
 		tempData = averagedata.averageData(10, 10, 'Temperature Values')
+		batteryPercent = averagedata.averageData(10, 10, 'Battery Percentage')
 
 	try:
 		#begin loop
@@ -175,10 +177,13 @@ def main():
 			#if charging is on then the voltage reference is bigger
 			#get voltage analog value then convert to actual voltage
 
-			#if charging_state.value == True:
-				#charging_reference = 54
-			#else:
-			charging_reference = 50
+			if charging_state.value == True:
+				charging_reference = 14
+				state_charge = 'Charging'
+			else:
+				charging_reference = 10
+				state_charge = 'Discharging'
+
 
 			voltage_reference1 = 13.7
 			voltage_reference2 = 70
@@ -192,6 +197,8 @@ def main():
 
 			for i in range(4):
 				voltage_volt[i] = round(voltage_volt[i] , 1)
+
+			rescaled_voltage = voltage_volt[3] - 40
 			battery_1 = voltage_volt[0]
 			battery_2 = voltage_volt[1] - voltage_volt[0]
 			battery_3 = voltage_volt[2] - voltage_volt[1]
@@ -200,7 +207,7 @@ def main():
 
 			#get current value from 3 sensor ACS712
 			for i in range(4, 7):
-				current_amp[i] = round(((1.65 - (mcp_analog[i] * (3.3 / 1024.0))) / 0.066), 2)
+				current_amp[i] = round(((1.5 - (mcp_analog[i] * (3 / 1024.0))) / 0.066), 2)
 
 			#power consumed by load, calculate with current * voltage output.
 			#Output 1: current reading 1 * 12V
@@ -212,14 +219,18 @@ def main():
 			total_power_usage = power_output1 + power_output2 + power_output3
 
 			#get battery percentage by comparing voltage reading to reference voltage then multiply by 100
-			battery_percentage = round(((voltage_volt[3]/charging_reference) * 100), 0)
+			if t1 - tbat >= 0.5:
+				battery_read = (rescaled_voltage/charging_reference) * 100
+				batteryPercent.updateData(battery_read)
+				tbat = time()
+
+			battery_percentage = batteryPercent.runningAverage()
 			if battery_percentage > 100:
 				battery_percentage = 100
 
 			sensorData = get_sensor_data(temp, total_power_usage, battery_percentage)
-
 			#check if factory reset button is pressed more than 5 second
-#			factory_reset_button.when_held = set_default
+			factory_reset_button.when_held = set_default
 
 			if t1 - tlog >= updateSensor:
 				write_sensor(filename_log, sensorData)
@@ -231,16 +242,20 @@ def main():
 			 # 	print('Battery 2 : ' + str(battery_2) + 'V')
 			 # 	print('Battery 3 : ' + str(battery_3) + 'V')
 			 # 	print('Battery 4 : ' + str(battery_4) + 'V')
+			 	print('Battery in series : ' + str(voltage_volt[3]) + 'V')
 				for i in range(4):
 					print('Battery ' + str(i) + ' : ' + str(voltage_volt[i]) + 'V')
-			 	print('Battery in series : ' + str(voltage_volt[3]) + 'V')
 			 	for i in range(4,7):
 			 		print('Load ' + str(i-3) + ' : ' + str(current_amp[i]) + 'A')
 			 	print('Total Power Usage : ' + str(total_power_usage) + 'W')
 			 	print('Battery Capacity : ' + str(battery_percentage) + '%')
-				lcd.lcd_display_string('Temp: ' + str(temp) + degree + 'C', 1)
-				lcd.lcd_display_string('Voltage: ' + str(voltage_volt[0]) + 'V', 2)
-				sensor_now(filename_sensor, temp, total_power_usage, battery_percentage)
+			 	print('State of Reset : ' + str(factory_reset_button.value))
+			 	print('State of charging : ' + str(charging_state.value))
+			 	lcd.lcd_display_string('-----RG-10------', 1)
+				lcd.lcd_display_string('Temp: ' + str(temp) + 'C', 2)
+				lcd.lcd_display_string('Battery: ' + str(round(battery_percentage,0)) + '%', 3)
+				lcd.lcd_display_string('Load: ' + str(total_power_usage) + 'W', 4)
+				sensor_now(filename_sensor, temp, total_power_usage, round(battery_percentage,0), state_charge)
 				battery_now(filename_battery, voltage_volt[0], voltage_volt[1], voltage_volt[2], voltage_volt[3])
 				# battery_now(filename_battery, battery_1, battery_2, battery_3, battery_4)
 				tnow = time()
