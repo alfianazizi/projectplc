@@ -206,8 +206,9 @@ def main():
 			#until here
 
 			#get current value from 3 sensor ACS712
-			for i in range(4, 7):
-				current_amp[i] = round(((1.493 - (mcp_analog[i] * (3 / 930.0))) / 0.066), 2)
+			current_amp[4] = round(((1.49 - (mcp_analog[4] * (3 / 930.0))) / 0.066), 2)
+			current_amp[5] = round(((1.5 - (mcp_analog[5] * (3 / 916.0))) / 0.066), 2)
+			current_amp[6] = round(((1.5 - (mcp_analog[6] * (3 / 922.0))) / 0.066), 2)
 
 			#power consumed by load, calculate with current * voltage output.
 			#Output 1: current reading 1 * 12V
@@ -227,6 +228,8 @@ def main():
 			battery_percentage = batteryPercent.runningAverage()
 			if battery_percentage > 100:
 				battery_percentage = 100
+			elif battery_percentage < 0:
+				battery_percentage = 0
 
 			sensorData = get_sensor_data(temp, total_power_usage, battery_percentage)
 			#check if factory reset button is pressed more than 5 second
