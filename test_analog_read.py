@@ -181,7 +181,7 @@ def main():
 			charging_reference = 50
 
 			voltage_reference1 = 13.7
-			voltage_reference2 = 70
+			voltage_reference2 = 69
 			voltage_reference3 = 59
 			voltage_reference4 = 56.6
 
