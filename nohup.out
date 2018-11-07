@@ -1,8 +1,0 @@
-Logging Temperature
- * Serving Flask app "temp_with_api" (lazy loading)
- * Environment: production
-   WARNING: Do not use the development server in a production environment.
-   Use a production WSGI server instead.
- * Debug mode: off
- * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
-167.205.22.102 - - [26/Oct/2018 14:22:02] "GET /api/v1/sensor HTTP/1.1" 200 -
