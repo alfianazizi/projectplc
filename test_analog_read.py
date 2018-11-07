@@ -227,10 +227,12 @@ def main():
 
 			if t1 - tnow >= 5:
 				print('\nAverage Temperature: ' + str(temp))
-				print('Battery 1 : ' + str(battery_1) + 'V')
-			 	print('Battery 2 : ' + str(battery_2) + 'V')
-			 	print('Battery 3 : ' + str(battery_3) + 'V')
-			 	print('Battery 4 : ' + str(battery_4) + 'V')
+				# print('Battery 1 : ' + str(battery_1) + 'V')
+			 # 	print('Battery 2 : ' + str(battery_2) + 'V')
+			 # 	print('Battery 3 : ' + str(battery_3) + 'V')
+			 # 	print('Battery 4 : ' + str(battery_4) + 'V')
+				for i in range(4):
+					print('Battery ' + str(i) + ' : ' + str(voltage_volt[i]) + 'V')
 			 	print('Battery in series : ' + str(voltage_volt[3]) + 'V')
 			 	for i in range(4,7):
 			 		print('Load ' + str(i-3) + ' : ' + str(current_amp[i]) + 'A')
@@ -239,7 +241,8 @@ def main():
 				lcd.lcd_display_string('Temp: ' + str(temp) + degree + 'C', 1)
 				lcd.lcd_display_string('Voltage: ' + str(voltage_volt[0]) + 'V', 2)
 				sensor_now(filename_sensor, temp, total_power_usage, battery_percentage)
-				battery_now(filename_battery, battery_1, battery_2, battery_3, battery_4)
+				battery_now(filename_battery, voltage_volt[0], voltage_volt[1], voltage_volt[2], voltage_volt[3])
+				# battery_now(filename_battery, battery_1, battery_2, battery_3, battery_4)
 				tnow = time()
 
 	#if keyboard interrupt pressed
