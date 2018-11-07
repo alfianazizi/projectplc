@@ -33,7 +33,7 @@ RELAY2_PIN = 18
 
 #define relay object
 relay_output = OutputDevice(RELAY1_PIN, active_high=False, initial_value=False)
-relay_input = OutputDevice(RELAY2_PIN, active_high=False, initial_value=False)
+relay_input = OutputDevice(RELAY2_PIN, active_high=False, initial_value=True)
 
 #define LCD I2C
 lcd = I2C_LCD_driver.lcd()
@@ -247,7 +247,7 @@ def main():
 					charging_reference = 9.5
 					relay_input.on()
 					state_charge = 'Discharging'
-				elif battery_percentage => 30.0 and battery_percentage <= 85.0:
+				elif battery_percentage <= 94.0:
 					charging_reference = 12.9
 					relay_input.off()
 					state_charge = 'Charging'
@@ -293,6 +293,7 @@ def main():
 	except KeyboardInterrupt:
 		print("Program Stopped")
 		#GPIO.cleanup()
+		relay_input.off()
 		sys.exit(0)
 if __name__ == "__main__":
 	print("Logging Temperature")
