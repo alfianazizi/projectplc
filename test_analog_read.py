@@ -13,7 +13,7 @@ import os
 import random
 import Adafruit_DHT as dht
 import Adafruit_MCP3008
-#import I2C_LCD_driver
+import I2C_LCD_driver
 import averagedata
 
 # Software SPI configuration for MCP3008:
@@ -29,7 +29,7 @@ mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 #output_pin = 24
 
 #define LCD I2C
-#lcd = I2C_LCD_driver.lcd()
+lcd = I2C_LCD_driver.lcd()
 
 #Define header for csv log files
 header_temp = ['time', 'temperature', 'arus', 'battery']
@@ -152,7 +152,7 @@ def main():
 			filename_log = dirpath + '/log/' + filename_date + '.csv'
 
 			#read all analog pin from mcp3008 with interval of 1 second
-			if t1 - tread >= 0.067:
+			if t1 - tread >= 0.003:
 				for i in range(8):
 					values[i] = mcp.read_adc(i)
 					analogData_ch[i].updateData(values[i])
@@ -225,7 +225,7 @@ def main():
 				write_sensor(filename_log, sensorData)
 				tlog = time()
 
-			if t1 - tnow >= 10:
+			if t1 - tnow >= 5:
 				print('\nAverage Temperature: ' + str(temp))
 				print('Battery 1 : ' + str(battery_1) + 'V')
 			 	print('Battery 2 : ' + str(battery_2) + 'V')
@@ -236,8 +236,8 @@ def main():
 			 		print('Load ' + str(i-3) + ' : ' + str(current_amp[i]) + 'A')
 			 	print('Total Power Usage : ' + str(total_power_usage) + 'W')
 			 	print('Battery Capacity : ' + str(battery_percentage) + '%')
-# 			     	lcd.lcd_display_string('Temp: ' + str(temp) + degree + 'C', 1)
-#		    		lcd.lcd_display_string('Voltage: ' + str(voltage_volt[0]) + 'V', 2)
+				lcd.lcd_display_string('Temp: ' + str(temp) + degree + 'C', 1)
+				lcd.lcd_display_string('Voltage: ' + str(voltage_volt[0]) + 'V', 2)
 				sensor_now(filename_sensor, temp, total_power_usage, battery_percentage)
 				battery_now(filename_battery, battery_1, battery_2, battery_3, battery_4)
 				tnow = time()
@@ -248,5 +248,5 @@ def main():
 		#GPIO.cleanup()
 if __name__ == "__main__":
 	print("Logging Temperature")
-#	lcd.lcd_clear()
+	lcd.lcd_clear()
 	main()
