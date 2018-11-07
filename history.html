@@ -106,7 +106,7 @@
 				var selMonth = document.getElementById('selMonth');
 				for (var i = 0; i < Object.keys(obj).length; i++) {
 				    var opt = "<option";
-				    if(obj[i] != "sensor-now.txt") {
+				    if(obj[i] != "sensor-now.txt" && obj[i] != "battery-now.txt") {
 				    	// file with current year and month in its name -> selected
 				    	var formattedMonth = moment(obj[i].substring(5,7), 'MM').format('MMMM');
 				    	if (obj[i].substring(0,4) == year && obj[i].substring(5,7) == month) {
