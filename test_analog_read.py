@@ -182,17 +182,17 @@ def main():
 			#get voltage analog value then convert to actual voltage
 
 			if charging_state.is_pressed:
-				charging_reference = 14
-				state_charge = 'Charging'
-			else:
 				charging_reference = 10
 				state_charge = 'Discharging'
+			else:
+				charging_reference = 14
+				state_charge = 'Charging'
 
 
 			voltage_reference1 = 13.7
-			voltage_reference2 = 69
-			voltage_reference3 = 59
-			voltage_reference4 = 56.6
+			voltage_reference2 = 53.64
+			voltage_reference3 = 54.4
+			voltage_reference4 = 53.5
 
 			voltage_volt[0] = (mcp_analog[0] / 1023) * voltage_reference1
 			voltage_volt[1] = (mcp_analog[1] / 1023) * voltage_reference2
@@ -268,7 +268,7 @@ def main():
 			 	print('Total Power Usage : ' + str(total_power_usage) + 'W')
 			 	print('Battery Capacity : ' + str(battery_percentage) + '%')
 			 	print('State of Reset : ' + str(factory_reset_button.value))
-			 	print('State of charging : ' + str(charging_state.value))
+			 	print('State of charging : ' + state_charge)
 			 	lcd.lcd_display_string('-----RG-10------', 1)
 				lcd.lcd_display_string('Temp: ' + str(temp) + 'C', 2)
 				lcd.lcd_display_string('Battery: ' + str(round(battery_percentage,0)) + '%', 3)
@@ -282,6 +282,7 @@ def main():
 	except KeyboardInterrupt:
 		print("Program Stopped")
 		#GPIO.cleanup()
+		sys.exit(0)
 if __name__ == "__main__":
 	print("Logging Temperature")
 	lcd.lcd_clear()
