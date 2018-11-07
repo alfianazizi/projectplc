@@ -227,7 +227,7 @@ def main():
 
 			if t1 - tnow >= 5:
 				print('\nAverage Temperature: ' + str(temp))
-			  print('Battery 1 : ' + str(battery_1) + 'V')
+				print('Battery 1 : ' + str(battery_1) + 'V')
 			 	print('Battery 2 : ' + str(battery_2) + 'V')
 			 	print('Battery 3 : ' + str(battery_3) + 'V')
 			 	print('Battery 4 : ' + str(battery_4) + 'V')
