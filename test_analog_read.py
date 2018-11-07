@@ -178,7 +178,7 @@ def main():
 			#if charging_state.value == True:
 				#charging_reference = 54
 			#else:
-			charging_reference = 48
+			charging_reference = 50
 
 			voltage_reference1 = 13.745
 			voltage_reference2 = 70.6
@@ -227,10 +227,11 @@ def main():
 
 			if t1 - tnow >= 5:
 				print('\nAverage Temperature: ' + str(temp))
-			        print('Battery 1 : ' + str(battery_1) + 'V')
+			  print('Battery 1 : ' + str(battery_1) + 'V')
 			 	print('Battery 2 : ' + str(battery_2) + 'V')
 			 	print('Battery 3 : ' + str(battery_3) + 'V')
 			 	print('Battery 4 : ' + str(battery_4) + 'V')
+			 	print('Battery in series : ' + str(voltage_volt[3]) + 'V')
 			 	for i in range(4,7):
 			 		print('Load ' + str(i-3) + ' : ' + str(current_amp[i]) + 'A')
 			 	print('Total Power Usage : ' + str(total_power_usage) + 'W')
