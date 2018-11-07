@@ -59,9 +59,9 @@
 			</div>
 			<div class="col-sm-3">
 				<div class="panel panel-default">
-					<div class="panel-heading" align="center">Current Voltage</div>
+					<div class="panel-heading" align="center">Power Now</div>
 					<div class="panel-body">
-						<h1 align="center" id="currentArus"></h1>
+						<h1 align="center" id="powerNow"></h1>
 					</div>
 				</div>
 			</div>
@@ -75,9 +75,9 @@
 			</div>
 			<div class="col-sm-3">
 				<div class="panel panel-default">
-					<div class="panel-heading" align="center">Battery Remaining</div>
+					<div class="panel-heading" align="center">Status</div>
 					<div class="panel-body">
-						<h1 align="center">10 hours</h1>
+						<h1 align="center" id="chargingStatus"></h1>
 					</div>
 				</div>
 			</div>
@@ -198,11 +198,14 @@
 			var textWidget = document.getElementById("currentTemp");
 			textWidget.textContent = (Math.round(parseFloat(currData[0]) * 100) / 100)+'\u00B0'+'C';
 
-			textWidget = document.getElementById("currentArus");
-			textWidget.textContent = (Math.round(parseFloat(currData[1]) * 100) / 100)+' A';
+			textWidget = document.getElementById("powerNow");
+			textWidget.textContent = (Math.round(parseFloat(currData[1]) * 100) / 100)+' W';
 			
 			textWidget = document.getElementById("currentBat");
 			textWidget.textContent = (Math.round(parseFloat(currData[2]) * 100) / 100)+' %';
+
+			textWidget = document.getElementById("chargingStatus");
+			textWidget.textContent = currData[3];
 		}
 
 		function readBattery() {
