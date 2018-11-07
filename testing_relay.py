@@ -32,9 +32,10 @@ def set_relay(status):
 
 
 def toggle_relay():
-    print("toggling relay 1 and 2 with interval 1 sec")
+    print("toggling relay 1")
     relay1.toggle()
     time.sleep(1)
+    print("toggling realy 2")
     relay2.toggle()
     time.sleep(1)
 

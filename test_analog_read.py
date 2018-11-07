@@ -32,8 +32,8 @@ RELAY1_PIN = 27
 RELAY2_PIN = 18
 
 #define relay object
-relay_output = OutputDevice(RELAY1_PIN, active_high=False, initial_value=True)
-relay_input = OutputDevice(RELAY2_PIN)
+relay_output = OutputDevice(RELAY1_PIN, active_high=False, initial_value=False)
+relay_input = OutputDevice(RELAY2_PIN, active_high=False, initial_value=False)
 
 #define LCD I2C
 lcd = I2C_LCD_driver.lcd()
@@ -182,10 +182,10 @@ def main():
 			#get voltage analog value then convert to actual voltage
 
 			if charging_state.is_pressed:
-				charging_reference = 10
+				charging_reference = 9.5
 				state_charge = 'Discharging'
 			else:
-				charging_reference = 14
+				charging_reference = 12.9
 				state_charge = 'Charging'
 
 
@@ -239,11 +239,21 @@ def main():
 			elif battery_percentage < 0.0:
 				battery_percentage = 0.0
 
-			if battery_percentage > 90.0:
-				relay_input.on()
-			elif battery_percentage > 30.0 and battery_percentage < 90.0:
-				relay_input.off()
-			elif battery_percentage < 30.0:
+			if charging_state.is_pressed:
+				charging_reference = 9.5
+				state_charge = 'Discharging'
+			else:
+				charging_reference = 12.9
+				if battery_percentage > 90.0:
+					relay_input.on()
+					state_charge = 'Discharging'
+				elif battery_percentage > 30.0 and battery_percentage < 90.0:
+					relay_input.off()
+					state_charge = 'Charging'
+
+			if battery_percentage < 30.0:
+				relay_output.on()
+			else:
 				relay_output.off()
 
 			sensorData = get_sensor_data(temp, total_power_usage, battery_percentage)
