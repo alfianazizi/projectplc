@@ -232,7 +232,7 @@ def main():
 			 # 	print('Battery 3 : ' + str(battery_3) + 'V')
 			 # 	print('Battery 4 : ' + str(battery_4) + 'V')
 				for i in range(4):
-					print('Battery ' + str(i) + ' : ' + voltage_volt[i] + 'V')
+					print('Battery ' + str(i) + ' : ' + str(voltage_volt[i]) + 'V')
 			 	print('Battery in series : ' + str(voltage_volt[3]) + 'V')
 			 	for i in range(4,7):
 			 		print('Load ' + str(i-3) + ' : ' + str(current_amp[i]) + 'A')
